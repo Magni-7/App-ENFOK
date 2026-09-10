@@ -1,0 +1,118 @@
+// Schéma de données — App de réservation de tresses (V1)
+//
+// Point d'architecture important : tout est rattaché à un "Professional".
+// Pour cette V1 il n'y en a qu'un seul (Eva), mais aucune donnée n'est
+// codée en dur pour un professionnel unique : Category, Style, Slot et
+// Booking pointent tous vers un professionalId. Ajouter un deuxième
+// professionnel plus tard ne demande pas de changement de schéma.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Professional {
+  id                  String   @id @default(cuid())
+  slug                String   @unique
+  displayName         String
+  bio                 String?
+  instagramHandle     String?
+  instagramDmUsername String?
+  whatsappNumber      String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  categories Category[]
+  styles     Style[]
+  slots      Slot[]
+  bookings   Booking[]
+}
+
+// Les catégories sont des données modifiables (pas un enum figé dans le
+// code) car les libellés exacts doivent être confirmés avec Eva et
+// pourraient différer pour un futur deuxième professionnel.
+model Category {
+  id             String   @id @default(cuid())
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+  name           String
+  slug           String
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  styles Style[]
+
+  @@unique([professionalId, slug])
+}
+
+// SQLite ne supporte pas les enums natifs Prisma : on utilise une chaîne
+// contrainte par convention ("CLIENT" | "PROFESSIONAL") au niveau applicatif.
+model Style {
+  id              String       @id @default(cuid())
+  professionalId  String
+  professional    Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+  categoryId      String
+  category        Category     @relation(fields: [categoryId], references: [id])
+
+  name            String
+  description     String?
+  basePriceCents  Int
+  durationMinutes Int
+  minHairLength   String
+  // Valeurs attendues : "CLIENT" | "PROFESSIONAL" (voir lib/format.ts)
+  hairProvidedBy  String       @default("CLIENT")
+  isActive        Boolean      @default(true)
+  order           Int          @default(0)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  photos   StylePhoto[]
+  bookings Booking[]
+}
+
+// Une seule photo suffit pour la V1, mais la relation one-to-many permet
+// d'en ajouter d'autres plus tard sans migration de schéma.
+model StylePhoto {
+  id      String @id @default(cuid())
+  styleId String
+  style   Style  @relation(fields: [styleId], references: [id], onDelete: Cascade)
+  url     String
+  alt     String?
+  order   Int    @default(0)
+}
+
+model Slot {
+  id             String       @id @default(cuid())
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+  startAt        DateTime
+  endAt          DateTime
+  isBooked       Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  booking Booking?
+
+  @@index([professionalId, startAt])
+}
+
+// Valeurs attendues : "CONFIRMED" | "CANCELLED" (pas d'enum natif sous SQLite)
+model Booking {
+  id             String        @id @default(cuid())
+  professionalId String
+  professional   Professional  @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+  styleId        String
+  style          Style         @relation(fields: [styleId], references: [id])
+  slotId         String        @unique
+  slot           Slot          @relation(fields: [slotId], references: [id])
+
+  clientName  String
+  clientPhone String
+  clientEmail String?
+  notes       String?
+  status      String        @default("CONFIRMED")
+  createdAt   DateTime      @default(now())
+}

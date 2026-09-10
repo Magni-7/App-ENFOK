@@ -1,0 +1,76 @@
+# Eva Braids — App de réservation de tresses (V1)
+
+App de réservation de rendez-vous pour les tresses, construite d'abord pour
+Eva (@braidingeva) à Barcelone. Voir `consignes_claude_code_v1_tresses.md`
+pour le contexte produit complet.
+
+## Portée de cette V1
+
+- Catalogue de styles de tresses (données modifiables en base, pas codées en dur)
+- Filtre simple par catégorie (ex : tresses longues / courtes)
+- Réservation de créneau avec confirmation
+- Bouton "Design personnalisé" vers WhatsApp / Instagram
+- Agenda admin simple pour Eva (protégé par mot de passe)
+
+Explicitement hors scope V1 : filtres avancés, supplément extensions, avis
+clients, paiement en ligne, multi-professionnels, site séparé.
+
+## Stack technique
+
+- [Next.js](https://nextjs.org) (App Router) + TypeScript
+- [Tailwind CSS](https://tailwindcss.com) pour l'identité visuelle noir/blanc
+- [Prisma](https://www.prisma.io) + SQLite pour le développement local
+  (facile à faire migrer vers Postgres plus tard en changeant `DATABASE_URL`
+  et le `provider` dans `prisma/schema.prisma`)
+
+## Architecture des données
+
+Tout est rattaché à un `Professional`. Pour cette V1 il n'y en a qu'un seul
+(Eva, slug `"eva"`), mais `Category`, `Style`, `Slot` et `Booking` pointent
+tous vers un `professionalId` — ajouter un deuxième professionnel plus tard
+ne demande pas de réécrire le schéma.
+
+Les catégories (`Category`) sont des données modifiables en base plutôt
+qu'un enum figé dans le code, car les libellés exacts restent à confirmer
+avec Eva.
+
+## Démarrer en local
+
+```bash
+npm install
+cp .env.example .env
+# éditer .env : définir ADMIN_PASSWORD et ADMIN_SESSION_SECRET
+
+npm run db:push   # crée la base SQLite à partir du schéma
+npm run db:seed   # remplit des données d'exemple (placeholders, voir ci-dessous)
+npm run dev       # http://localhost:3000
+```
+
+L'espace admin d'Eva est sur `/admin` (mot de passe = `ADMIN_PASSWORD`).
+
+## Données d'exemple (placeholder)
+
+Les vraies données d'Eva (styles précis, prix, durées, longueurs minimales,
+numéro WhatsApp, identifiant Instagram) n'étaient pas encore connues à la
+rédaction de cette V1. Le script `prisma/seed.ts` crée donc :
+
+- Un professionnel "Eva" avec des coordonnées WhatsApp/Instagram fictives
+- 2 catégories : "Tresses longues" / "Tresses courtes"
+- 5 styles d'exemple avec prix, durées et longueurs minimales fictifs
+- Des créneaux disponibles sur les 10 prochains jours
+
+**À faire dès réception du questionnaire rempli par Eva** : mettre à jour
+`prisma/seed.ts` (ou directement les données en base via un futur écran
+d'administration) avec les vraies informations, remplacer les photos
+placeholder dans `public/images/`, et confirmer le numéro WhatsApp /
+identifiant Instagram dans le seed pour que le bouton "Design personnalisé"
+fonctionne réellement.
+
+## Notes pour la suite (hors V1)
+
+- Filtre multi-critères avancé (budget, temps disponible)
+- Supplément "extensions" automatique pour cheveux trop courts
+- Avis clients
+- Paiement en ligne / acompte à la réservation
+- Généralisation multi-professionnels (le schéma le permet déjà)
+- Un vrai écran d'administration pour gérer styles/catégories sans toucher au code

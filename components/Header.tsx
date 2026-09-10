@@ -1,0 +1,21 @@
+import Link from "next/link";
+
+export default function Header() {
+  return (
+    <header className="border-b border-line">
+      <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-5">
+        <Link href="/" className="text-lg font-semibold tracking-tight">
+          Eva Braids
+        </Link>
+        <nav className="flex items-center gap-6 text-sm">
+          <Link href="/catalogue" className="hover:opacity-60">
+            Catalogue
+          </Link>
+          <Link href="/admin" className="hover:opacity-60">
+            Espace pro
+          </Link>
+        </nav>
+      </div>
+    </header>
+  );
+}

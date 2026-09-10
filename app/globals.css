@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background-color: #ffffff;
+  color: #0a0a0a;
+}
+
+::selection {
+  background-color: #0a0a0a;
+  color: #ffffff;
+}

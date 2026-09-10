@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <rect width="800" height="600" fill="#0a0a0a" />
+  <g stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.85">
+    <path d="M260 80 C 320 140, 200 200, 260 260 C 320 320, 200 380, 260 440 C 320 500, 260 540, 260 560" />
+    <path d="M400 80 C 460 140, 340 200, 400 260 C 460 320, 340 380, 400 440 C 460 500, 400 540, 400 560" />
+    <path d="M540 80 C 600 140, 480 200, 540 260 C 600 320, 480 380, 540 440 C 600 500, 540 540, 540 560" />
+  </g>
+  <text x="400" y="580" font-family="system-ui, sans-serif" font-size="20" fill="#ffffff" text-anchor="middle" opacity="0.7">
+    Photo à venir
+  </text>
+</svg>
