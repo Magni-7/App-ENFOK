@@ -16,7 +16,7 @@ export default function CategoryChips({ categories, activeSlug }: CategoryChipsP
           !activeSlug ? "border-ink bg-ink text-white" : "border-line hover:border-ink"
         }`}
       >
-        Tous les styles
+        Todos los estilos
       </Link>
       {categories.map((category) => (
         <Link

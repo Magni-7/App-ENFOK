@@ -1,7 +1,7 @@
 export function formatPriceFrom(basePriceCents: number): string {
   const euros = basePriceCents / 100;
   const formatted = euros % 1 === 0 ? euros.toFixed(0) : euros.toFixed(2);
-  return `à partir de ${formatted}€`;
+  return `desde ${formatted}€`;
 }
 
 export function formatDuration(durationMinutes: number): string {
@@ -12,13 +12,13 @@ export function formatDuration(durationMinutes: number): string {
   return `${hours} h ${minutes}`;
 }
 
-const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
+const dateFormatter = new Intl.DateTimeFormat("es-ES", {
   weekday: "long",
   day: "numeric",
   month: "long",
 });
 
-const timeFormatter = new Intl.DateTimeFormat("fr-FR", {
+const timeFormatter = new Intl.DateTimeFormat("es-ES", {
   hour: "2-digit",
   minute: "2-digit",
 });
@@ -33,5 +33,5 @@ export function formatSlotTime(date: Date): string {
 }
 
 export function formatHairProvider(hairProvidedBy: string): string {
-  return hairProvidedBy === "PROFESSIONAL" ? "Mèches fournies par Eva" : "Mèches fournies par la cliente";
+  return hairProvidedBy === "PROFESSIONAL" ? "Extensiones a cargo de Eva" : "Extensiones a cargo de la clienta";
 }

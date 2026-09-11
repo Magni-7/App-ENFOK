@@ -8,11 +8,11 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
   const { error } = await searchParams;
   return (
     <div className="mx-auto flex max-w-sm flex-col gap-6 py-16">
-      <h1 className="text-xl font-semibold tracking-tight">Espace pro — Eva</h1>
+      <h1 className="text-xl font-semibold tracking-tight">Zona profesional — Eva</h1>
 
       <form action={login} className="flex flex-col gap-4">
         <label className="flex flex-col gap-1 text-sm">
-          Mot de passe
+          Contraseña
           <input
             type="password"
             name="password"
@@ -23,14 +23,14 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
         </label>
 
         {error && (
-          <p className="text-sm text-red-600">Mot de passe incorrect.</p>
+          <p className="text-sm text-red-600">Contraseña incorrecta.</p>
         )}
 
         <button
           type="submit"
           className="border border-ink bg-ink px-6 py-3 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-white hover:text-ink"
         >
-          Se connecter
+          Iniciar sesión
         </button>
       </form>
     </div>

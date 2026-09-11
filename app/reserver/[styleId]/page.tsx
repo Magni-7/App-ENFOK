@@ -43,17 +43,18 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
   return (
     <div className="flex flex-col gap-8">
       <Link href={`/styles/${style.id}`} className="text-sm text-ink/60 hover:text-ink">
-        ← Retour à la fiche du style
+        ← Volver a la ficha del estilo
       </Link>
 
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Réserver : {style.name}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Reservar: {style.name}</h1>
         <p className="mt-1 text-sm text-ink/70">{formatPriceFrom(style.basePriceCents)}</p>
       </div>
 
       {slots.length === 0 ? (
         <p className="text-sm text-ink/60">
-          Aucun créneau disponible pour le moment. Contactez Eva directement pour convenir d&apos;une date.
+          No hay ningún horario disponible por ahora. Contacta directamente con Eva para acordar una
+          fecha.
         </p>
       ) : (
         <form action={createBooking} className="flex flex-col gap-8">
@@ -61,7 +62,7 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
 
           <fieldset className="flex flex-col gap-6">
             <legend className="mb-2 text-sm uppercase tracking-widest text-ink/60">
-              1. Choisissez un créneau
+              1. Elige un horario
             </legend>
             {[...slotsByDate.entries()].map(([dateLabel, dateSlots]) => (
               <div key={dateLabel}>
@@ -89,11 +90,11 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
 
           <fieldset className="flex flex-col gap-4">
             <legend className="mb-2 text-sm uppercase tracking-widest text-ink/60">
-              2. Vos coordonnées
+              2. Tus datos
             </legend>
 
             <label className="flex flex-col gap-1 text-sm">
-              Nom complet *
+              Nombre completo *
               <input
                 type="text"
                 name="clientName"
@@ -103,7 +104,7 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
             </label>
 
             <label className="flex flex-col gap-1 text-sm">
-              Téléphone (WhatsApp de préférence) *
+              Teléfono (preferiblemente WhatsApp) *
               <input
                 type="tel"
                 name="clientPhone"
@@ -113,7 +114,7 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
             </label>
 
             <label className="flex flex-col gap-1 text-sm">
-              Email (optionnel)
+              Email (opcional)
               <input
                 type="email"
                 name="clientEmail"
@@ -122,7 +123,7 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
             </label>
 
             <label className="flex flex-col gap-1 text-sm">
-              Note pour Eva (optionnel)
+              Nota para Eva (opcional)
               <textarea
                 name="notes"
                 rows={3}
@@ -135,7 +136,7 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
             type="submit"
             className="border border-ink bg-ink px-6 py-3 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-white hover:text-ink"
           >
-            Confirmer le rendez-vous
+            Confirmar la cita
           </button>
         </form>
       )}

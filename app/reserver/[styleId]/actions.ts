@@ -12,7 +12,7 @@ export async function createBooking(formData: FormData): Promise<void> {
   const notes = String(formData.get("notes") ?? "").trim();
 
   if (!styleId || !slotId || !clientName || !clientPhone) {
-    throw new Error("Merci de remplir le style, le créneau, votre nom et votre téléphone.");
+    throw new Error("Por favor completa el estilo, el horario, tu nombre y tu teléfono.");
   }
 
   const style = await prisma.style.findUniqueOrThrow({ where: { id: styleId } });
@@ -21,7 +21,7 @@ export async function createBooking(formData: FormData): Promise<void> {
     const slot = await tx.slot.findUniqueOrThrow({ where: { id: slotId } });
 
     if (slot.isBooked) {
-      throw new Error("Ce créneau vient d'être réservé par quelqu'un d'autre. Merci d'en choisir un autre.");
+      throw new Error("Este horario acaba de ser reservado por otra persona. Elige otro, por favor.");
     }
 
     await tx.slot.update({ where: { id: slotId }, data: { isBooked: true } });

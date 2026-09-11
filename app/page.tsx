@@ -17,16 +17,16 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col gap-12">
       <section className="text-center">
-        <h1 className="text-3xl font-semibold tracking-tight">Réservez votre style de tresses</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Reserva tu estilo de trenzas</h1>
         <p className="mx-auto mt-3 max-w-md text-ink/70">
-          {professional.displayName} vous accompagne pour un style de tresse précis, pensé pour votre
-          longueur de cheveux et votre style de vie.
+          {professional.displayName} te acompaña para conseguir un estilo de trenzas preciso, pensado
+          para tu longitud de cabello y tu estilo de vida.
         </p>
       </section>
 
       <section>
         <h2 className="mb-4 text-center text-sm uppercase tracking-widest text-ink/60">
-          Commencez par choisir une catégorie
+          Empieza eligiendo una categoría
         </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {categories.map((category) => (
@@ -41,14 +41,14 @@ export default async function HomePage() {
         </div>
         <div className="mt-4 text-center">
           <Link href="/catalogue" className="text-sm underline underline-offset-4 hover:no-underline">
-            Voir tous les styles
+            Ver todos los estilos
           </Link>
         </div>
       </section>
 
       <section className="flex flex-col items-center gap-3 border-t border-line pt-10 text-center">
         <p className="max-w-sm text-sm text-ink/70">
-          Vous avez une idée précise de style hors catalogue ?
+          ¿Tienes una idea concreta de un estilo fuera de catálogo?
         </p>
         <div className="flex justify-center">
           <ContactButton

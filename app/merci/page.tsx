@@ -24,29 +24,29 @@ export default async function MerciPage({ searchParams }: MerciPageProps) {
 
   return (
     <div className="flex flex-col items-center gap-6 py-12 text-center">
-      <h1 className="text-2xl font-semibold tracking-tight">Rendez-vous confirmé !</h1>
+      <h1 className="text-2xl font-semibold tracking-tight">¡Cita confirmada!</h1>
       <p className="text-ink/70">
-        Merci {booking.clientName}, votre rendez-vous avec {booking.professional.displayName} est
-        enregistré.
+        Gracias {booking.clientName}, tu cita con {booking.professional.displayName} ha sido
+        registrada.
       </p>
 
       <dl className="w-full max-w-sm border border-line p-6 text-left text-sm">
         <div className="flex justify-between border-b border-line py-2">
-          <dt className="text-ink/50">Style</dt>
+          <dt className="text-ink/50">Estilo</dt>
           <dd className="font-medium">{booking.style.name}</dd>
         </div>
         <div className="flex justify-between border-b border-line py-2">
-          <dt className="text-ink/50">Date</dt>
+          <dt className="text-ink/50">Fecha</dt>
           <dd className="font-medium">{formatSlotDate(booking.slot.startAt)}</dd>
         </div>
         <div className="flex justify-between py-2">
-          <dt className="text-ink/50">Heure</dt>
+          <dt className="text-ink/50">Hora</dt>
           <dd className="font-medium">{formatSlotTime(booking.slot.startAt)}</dd>
         </div>
       </dl>
 
       <Link href="/catalogue" className="text-sm underline underline-offset-4 hover:no-underline">
-        Retour au catalogue
+        Volver al catálogo
       </Link>
     </div>
   );

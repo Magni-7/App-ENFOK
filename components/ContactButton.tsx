@@ -6,7 +6,7 @@ type ContactButtonProps = {
 };
 
 const DEFAULT_MESSAGE =
-  "Bonjour Eva ! J'aimerais discuter d'un style de tresse personnalisé, hors catalogue.";
+  "¡Hola Eva! Me gustaría hablar sobre un estilo de trenzas personalizado, fuera de catálogo.";
 
 export default function ContactButton({
   whatsappNumber,
@@ -30,7 +30,7 @@ export default function ContactButton({
           rel="noopener noreferrer"
           className="inline-flex items-center justify-center border border-ink bg-ink px-6 py-3 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-white hover:text-ink"
         >
-          Design personnalisé — WhatsApp
+          Diseño personalizado — WhatsApp
         </a>
       )}
       {instagramHref && (
@@ -40,7 +40,7 @@ export default function ContactButton({
           rel="noopener noreferrer"
           className="text-sm text-ink underline underline-offset-4 hover:no-underline"
         >
-          ou envoyer un message sur Instagram
+          o enviar un mensaje por Instagram
         </a>
       )}
     </div>

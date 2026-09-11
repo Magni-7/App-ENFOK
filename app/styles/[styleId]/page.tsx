@@ -29,7 +29,7 @@ export default async function StylePage({ params }: StylePageProps) {
   return (
     <div className="flex flex-col gap-8">
       <Link href="/catalogue" className="text-sm text-ink/60 hover:text-ink">
-        ← Retour au catalogue
+        ← Volver al catálogo
       </Link>
 
       <div className="relative aspect-[4/3] w-full overflow-hidden border border-line bg-ink">
@@ -44,19 +44,19 @@ export default async function StylePage({ params }: StylePageProps) {
 
       <dl className="grid grid-cols-2 gap-4 border-y border-line py-6 text-sm sm:grid-cols-4">
         <div>
-          <dt className="text-ink/50">Prix</dt>
+          <dt className="text-ink/50">Precio</dt>
           <dd className="mt-1 font-medium">{formatPriceFrom(style.basePriceCents)}</dd>
         </div>
         <div>
-          <dt className="text-ink/50">Durée estimée</dt>
+          <dt className="text-ink/50">Duración estimada</dt>
           <dd className="mt-1 font-medium">{formatDuration(style.durationMinutes)}</dd>
         </div>
         <div>
-          <dt className="text-ink/50">Longueur minimale</dt>
+          <dt className="text-ink/50">Longitud mínima</dt>
           <dd className="mt-1 font-medium">{style.minHairLength}</dd>
         </div>
         <div>
-          <dt className="text-ink/50">Mèches</dt>
+          <dt className="text-ink/50">Extensiones</dt>
           <dd className="mt-1 font-medium">{formatHairProvider(style.hairProvidedBy)}</dd>
         </div>
       </dl>
@@ -65,15 +65,15 @@ export default async function StylePage({ params }: StylePageProps) {
         href={`/reserver/${style.id}`}
         className="inline-flex items-center justify-center border border-ink bg-ink px-6 py-3 text-center text-sm font-medium uppercase tracking-wide text-white transition hover:bg-white hover:text-ink"
       >
-        Réserver ce style
+        Reservar este estilo
       </Link>
 
       <div className="border-t border-line pt-6">
-        <p className="mb-3 text-sm text-ink/70">Vous préférez une variante personnalisée de ce style ?</p>
+        <p className="mb-3 text-sm text-ink/70">¿Prefieres una variante personalizada de este estilo?</p>
         <ContactButton
           whatsappNumber={style.professional.whatsappNumber}
           instagramUsername={style.professional.instagramDmUsername}
-          message={`Bonjour Eva ! Je suis intéressée par une variante personnalisée du style "${style.name}".`}
+          message={`¡Hola Eva! Me interesa una variante personalizada del estilo "${style.name}".`}
         />
       </div>
     </div>

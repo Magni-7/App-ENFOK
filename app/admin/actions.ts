@@ -38,7 +38,7 @@ export async function addSlot(formData: FormData): Promise<void> {
   const durationMinutes = Number(formData.get("durationMinutes") ?? 0);
 
   if (!date || !startTime || !durationMinutes) {
-    throw new Error("Merci de renseigner une date, une heure de début et une durée.");
+    throw new Error("Por favor indica una fecha, una hora de inicio y una duración.");
   }
 
   const professional = await getDefaultProfessional();

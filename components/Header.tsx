@@ -9,10 +9,10 @@ export default function Header() {
         </Link>
         <nav className="flex items-center gap-6 text-sm">
           <Link href="/catalogue" className="hover:opacity-60">
-            Catalogue
+            Catálogo
           </Link>
           <Link href="/admin" className="hover:opacity-60">
-            Espace pro
+            Zona profesional
           </Link>
         </nav>
       </div>

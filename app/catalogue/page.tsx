@@ -32,11 +32,11 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Catalogue de styles</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Catálogo de estilos</h1>
         <p className="mt-2 text-sm text-ink/70">
           {activeCategory
-            ? `Catégorie : ${activeCategory.name}`
-            : "Tous les styles disponibles."}
+            ? `Categoría: ${activeCategory.name}`
+            : "Todos los estilos disponibles."}
         </p>
       </div>
 
@@ -46,7 +46,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
       />
 
       {styles.length === 0 ? (
-        <p className="text-sm text-ink/60">Aucun style disponible pour cette catégorie pour le moment.</p>
+        <p className="text-sm text-ink/60">No hay estilos disponibles en esta categoría por ahora.</p>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {styles.map((style) => (
