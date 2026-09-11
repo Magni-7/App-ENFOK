@@ -19,9 +19,9 @@ clients, paiement en ligne, multi-professionnels, site séparé.
 
 - [Next.js](https://nextjs.org) (App Router) + TypeScript
 - [Tailwind CSS](https://tailwindcss.com) pour l'identité visuelle noir/blanc
-- [Prisma](https://www.prisma.io) + SQLite pour le développement local
-  (facile à faire migrer vers Postgres plus tard en changeant `DATABASE_URL`
-  et le `provider` dans `prisma/schema.prisma`)
+- [Prisma](https://www.prisma.io) + Postgres (ex : Neon, Vercel Postgres,
+  Supabase — une base gratuite suffit pour la V1). SQLite a été écarté car
+  peu fiable en serverless (Vercel).
 
 ## Architecture des données
 
@@ -39,9 +39,9 @@ avec Eva.
 ```bash
 npm install
 cp .env.example .env
-# éditer .env : définir ADMIN_PASSWORD et ADMIN_SESSION_SECRET
+# éditer .env : DATABASE_URL (connection string Postgres), ADMIN_PASSWORD, ADMIN_SESSION_SECRET
 
-npm run db:push   # crée la base SQLite à partir du schéma
+npm run db:push   # crée les tables dans la base Postgres à partir du schéma
 npm run db:seed   # remplit des données d'exemple (placeholders, voir ci-dessous)
 npm run dev       # http://localhost:3000
 ```
@@ -65,6 +65,20 @@ d'administration) avec les vraies informations, remplacer les photos
 placeholder dans `public/images/`, et confirmer le numéro WhatsApp /
 identifiant Instagram dans le seed pour que le bouton "Design personnalisé"
 fonctionne réellement.
+
+## Déploiement sur Vercel
+
+1. Importer le repo GitHub dans Vercel (ou brancher un projet existant).
+2. Créer une base Postgres (onglet Storage du projet Vercel, ou Neon/Supabase)
+   et connecter/copier `DATABASE_URL` dans les variables d'environnement du
+   projet Vercel.
+3. Ajouter aussi `ADMIN_PASSWORD` et `ADMIN_SESSION_SECRET` dans les variables
+   d'environnement.
+4. Lancer `npm run db:push && npm run db:seed` en local avec cette même
+   `DATABASE_URL` (ou via un script one-off) pour créer les tables et les
+   données de départ — la page d'accueil est prérendue au build et a donc
+   besoin que les données existent déjà en base.
+5. Déployer (ou redéployer une fois les variables ajoutées).
 
 ## Notes pour la suite (hors V1)
 
