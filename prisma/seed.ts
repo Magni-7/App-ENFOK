@@ -57,6 +57,7 @@ async function main() {
       minHairLength: "Mínimo hombro",
       hairProvidedBy: "CLIENT" as const,
       order: 1,
+      photoSlug: "box-braids",
     },
     {
       categoryId: longues.id,
@@ -67,6 +68,7 @@ async function main() {
       minHairLength: "Mínimo hombro",
       hairProvidedBy: "CLIENT" as const,
       order: 2,
+      photoSlug: "knotless-braids",
     },
     {
       categoryId: longues.id,
@@ -77,6 +79,7 @@ async function main() {
       minHairLength: "Mínimo barbilla",
       hairProvidedBy: "PROFESSIONAL" as const,
       order: 3,
+      photoSlug: "fulani-braids",
     },
     {
       categoryId: longues.id,
@@ -87,6 +90,7 @@ async function main() {
       minHairLength: "Mínimo hombro",
       hairProvidedBy: "CLIENT" as const,
       order: 4,
+      photoSlug: "senegalese-twists",
     },
     {
       categoryId: longues.id,
@@ -97,6 +101,7 @@ async function main() {
       minHairLength: "Mínimo hombro",
       hairProvidedBy: "PROFESSIONAL" as const,
       order: 5,
+      photoSlug: "ghana-braids",
     },
     {
       categoryId: longues.id,
@@ -107,6 +112,7 @@ async function main() {
       minHairLength: "Mínimo hombro",
       hairProvidedBy: "CLIENT" as const,
       order: 6,
+      photoSlug: "lemonade-braids",
     },
     {
       categoryId: longues.id,
@@ -117,6 +123,7 @@ async function main() {
       minHairLength: "Mínimo hombro",
       hairProvidedBy: "CLIENT" as const,
       order: 7,
+      photoSlug: "feed-in-braids",
     },
     {
       categoryId: longues.id,
@@ -127,6 +134,7 @@ async function main() {
       minHairLength: "Mínimo hombro",
       hairProvidedBy: "CLIENT" as const,
       order: 8,
+      photoSlug: "micro-braids",
     },
     {
       categoryId: longues.id,
@@ -137,6 +145,7 @@ async function main() {
       minHairLength: "Mínimo hombro",
       hairProvidedBy: "CLIENT" as const,
       order: 9,
+      photoSlug: "faux-locs",
     },
     {
       categoryId: longues.id,
@@ -147,6 +156,7 @@ async function main() {
       minHairLength: "Mínimo hombro",
       hairProvidedBy: "CLIENT" as const,
       order: 10,
+      photoSlug: "passion-twists",
     },
     {
       categoryId: longues.id,
@@ -157,6 +167,7 @@ async function main() {
       minHairLength: "Mínimo hombro",
       hairProvidedBy: "PROFESSIONAL" as const,
       order: 11,
+      photoSlug: "goddess-braids",
     },
     {
       categoryId: courtes.id,
@@ -167,6 +178,7 @@ async function main() {
       minHairLength: "Sin longitud mínima",
       hairProvidedBy: "CLIENT" as const,
       order: 1,
+      photoSlug: "bob-braids",
     },
     {
       categoryId: courtes.id,
@@ -177,6 +189,7 @@ async function main() {
       minHairLength: "Mínimo barbilla",
       hairProvidedBy: "CLIENT" as const,
       order: 2,
+      photoSlug: "boho-braids",
     },
     {
       categoryId: courtes.id,
@@ -187,6 +200,7 @@ async function main() {
       minHairLength: "Sin longitud mínima",
       hairProvidedBy: "PROFESSIONAL" as const,
       order: 3,
+      photoSlug: "cornrows",
     },
     {
       categoryId: courtes.id,
@@ -197,6 +211,7 @@ async function main() {
       minHairLength: "Sin longitud mínima",
       hairProvidedBy: "CLIENT" as const,
       order: 4,
+      photoSlug: "havana-twists",
     },
     {
       categoryId: courtes.id,
@@ -207,6 +222,7 @@ async function main() {
       minHairLength: "Sin longitud mínima",
       hairProvidedBy: "CLIENT" as const,
       order: 5,
+      photoSlug: "crochet-braids",
     },
     {
       categoryId: courtes.id,
@@ -217,6 +233,7 @@ async function main() {
       minHairLength: "Sin longitud mínima",
       hairProvidedBy: "PROFESSIONAL" as const,
       order: 6,
+      photoSlug: "stitch-braids",
     },
     {
       categoryId: courtes.id,
@@ -227,10 +244,11 @@ async function main() {
       minHairLength: "Mínimo barbilla",
       hairProvidedBy: "CLIENT" as const,
       order: 7,
+      photoSlug: "vixen-braids",
     },
   ];
 
-  for (const styleData of styles) {
+  for (const { photoSlug, ...styleData } of styles) {
     const style = await prisma.style.create({
       data: {
         professionalId: eva.id,
@@ -241,8 +259,8 @@ async function main() {
     await prisma.stylePhoto.create({
       data: {
         styleId: style.id,
-        url: "/images/placeholder-style.svg",
-        alt: `Foto próximamente — ${style.name}`,
+        url: `/images/styles/${photoSlug}.jpg`,
+        alt: style.name,
         order: 1,
       },
     });
