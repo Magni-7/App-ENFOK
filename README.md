@@ -88,3 +88,4 @@ fonctionne réellement.
 - Paiement en ligne / acompte à la réservation
 - Généralisation multi-professionnels (le schéma le permet déjà)
 - Un vrai écran d'administration pour gérer styles/catégories sans toucher au code
+
