@@ -5,8 +5,8 @@ import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 
 export const metadata: Metadata = {
-  title: "Eva Braids — Reserva de trenzas",
-  description: "Reserva tu cita de trenzas con Eva en Barcelona.",
+  title: "BraidHub — Reserva tu cita de trenzas",
+  description: "Reserva tu cita de trenzas con profesionales verificadas. Empieza con Eva en Barcelona.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

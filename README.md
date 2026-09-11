@@ -1,8 +1,9 @@
-# Eva Braids — App de réservation de tresses (V1)
+# BraidHub — App de réservation de tresses (V1)
 
-App de réservation de rendez-vous pour les tresses, construite d'abord pour
-Eva (@braidingeva) à Barcelone. Voir `consignes_claude_code_v1_tresses.md`
-pour le contexte produit complet.
+Plateforme de réservation de rendez-vous pour les tresses. Eva (@braidingeva,
+à Barcelone) est la première professionnelle sur l'app ; le schéma de données
+est déjà pensé pour accueillir d'autres braideuses par la suite. Voir
+`consignes_claude_code_v1_tresses.md` pour le contexte produit complet.
 
 ## Portée de cette V1
 
