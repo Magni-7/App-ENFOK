@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
 import ContactButton from "@/components/ContactButton";
 
+// Les données (catégories, styles) changent en base et ne doivent pas être
+// figées au build : rendu à la demande plutôt que prérendu statiquement.
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const professional = await getDefaultProfessional();
   const categories = await prisma.category.findMany({
