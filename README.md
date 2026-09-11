@@ -89,3 +89,4 @@ fonctionne réellement.
 - Généralisation multi-professionnels (le schéma le permet déjà)
 - Un vrai écran d'administration pour gérer styles/catégories sans toucher au code
 
+
