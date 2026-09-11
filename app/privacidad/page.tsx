@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Política de privacidad — BraidHub",
+  title: "Política de privacidad — Trenzame",
 };
 
 export default function PrivacidadPage() {
@@ -11,7 +11,7 @@ export default function PrivacidadPage() {
 
       <div className="flex flex-col gap-4 text-sm text-ink/80">
         <p>
-          En BraidHub tratamos los datos personales que las usuarias facilitan al
+          En Trenzame tratamos los datos personales que las usuarias facilitan al
           reservar una cita conforme al Reglamento (UE) 2016/679 (RGPD) y a la Ley
           Orgánica 3/2018, de Protección de Datos Personales y garantía de los
           derechos digitales (LOPDGDD).
@@ -20,7 +20,7 @@ export default function PrivacidadPage() {
         <section className="flex flex-col gap-2">
           <h2 className="font-medium text-ink">1. Responsable del tratamiento</h2>
           <p>
-            BraidHub <br />
+            Trenzame <br />
             <span className="text-ink/60">
               [Pendiente de completar con la identificación fiscal y datos de
               contacto del responsable una vez esté constituida la actividad.]

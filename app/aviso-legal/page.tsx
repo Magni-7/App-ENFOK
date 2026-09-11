@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Aviso legal — BraidHub",
+  title: "Aviso legal — Trenzame",
 };
 
 export default function AvisoLegalPage() {
@@ -20,7 +20,7 @@ export default function AvisoLegalPage() {
         <section className="flex flex-col gap-2">
           <h2 className="font-medium text-ink">1. Datos identificativos</h2>
           <p>
-            Titular: BraidHub <br />
+            Titular: Trenzame <br />
             Contacto: a través del botón de WhatsApp / Instagram disponible en la
             plataforma. <br />
             <span className="text-ink/60">
@@ -34,7 +34,7 @@ export default function AvisoLegalPage() {
         <section className="flex flex-col gap-2">
           <h2 className="font-medium text-ink">2. Objeto</h2>
           <p>
-            BraidHub es una plataforma de reserva de citas para servicios de trenzas.
+            Trenzame es una plataforma de reserva de citas para servicios de trenzas.
             Permite a las usuarias consultar un catálogo de estilos y reservar un
             turno con las profesionales disponibles en la plataforma.
           </p>
