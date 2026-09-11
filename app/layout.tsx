@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import BottomNav from "@/components/BottomNav";
 
 export const metadata: Metadata = {
   title: "Eva Braids — Reserva de trenzas",
@@ -13,8 +14,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es">
       <body className="flex min-h-screen flex-col bg-white text-ink antialiased">
         <Header />
-        <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">{children}</main>
+        <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10 pb-24 sm:pb-10">{children}</main>
         <Footer />
+        <BottomNav />
       </body>
     </html>
   );

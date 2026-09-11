@@ -10,8 +10,10 @@ const config: Config = {
       colors: {
         ink: "#0a0a0a",
         paper: "#ffffff",
-        mist: "#f4f4f4",
-        line: "#e2e2e2",
+        cream: "#faf6f1",
+        mist: "#f0ebe3",
+        line: "#e6ddd0",
+        clay: "#b25d3b",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],

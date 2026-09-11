@@ -14,7 +14,7 @@ export default function StyleCard({ id, name, photoUrl, basePriceCents, duration
   return (
     <Link
       href={`/styles/${id}`}
-      className="group block overflow-hidden border border-line transition hover:border-ink"
+      className="group block overflow-hidden rounded-2xl border border-line transition hover:border-clay"
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-ink">
         <Image

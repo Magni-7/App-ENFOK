@@ -12,8 +12,8 @@ export default function CategoryChips({ categories, activeSlug }: CategoryChipsP
     <div className="flex flex-wrap gap-2">
       <Link
         href="/catalogue"
-        className={`border px-4 py-2 text-sm transition ${
-          !activeSlug ? "border-ink bg-ink text-white" : "border-line hover:border-ink"
+        className={`rounded-full border px-4 py-2 text-sm transition ${
+          !activeSlug ? "border-clay bg-clay text-white" : "border-line hover:border-clay"
         }`}
       >
         Todos los estilos
@@ -22,8 +22,8 @@ export default function CategoryChips({ categories, activeSlug }: CategoryChipsP
         <Link
           key={category.slug}
           href={`/catalogue?categorie=${category.slug}`}
-          className={`border px-4 py-2 text-sm transition ${
-            activeSlug === category.slug ? "border-ink bg-ink text-white" : "border-line hover:border-ink"
+          className={`rounded-full border px-4 py-2 text-sm transition ${
+            activeSlug === category.slug ? "border-clay bg-clay text-white" : "border-line hover:border-clay"
           }`}
         >
           {category.name}
