@@ -148,7 +148,7 @@ export default function ReservationForm({
                 <span>{day.getDate()}</span>
                 {hasStarts && (
                   <span
-                    className={`h-1.5 w-1.5 rounded-full ${isSelected ? "bg-white" : "bg-[#4a9d6f]"}`}
+                    className={`h-1.5 w-1.5 rounded-full ${isSelected ? "bg-white" : "bg-fern"}`}
                   />
                 )}
               </button>
@@ -169,7 +169,7 @@ export default function ReservationForm({
                     : "border-line hover:border-ink"
                 }`}
               >
-                {timeFormatter.format(start)}
+                <span className="font-mono">{timeFormatter.format(start)}</span>
               </button>
             ))}
           </div>
@@ -178,8 +178,8 @@ export default function ReservationForm({
         {selectedStart && (
           <div className="flex items-center justify-between gap-4 border-t border-line pt-4">
             <div className="text-sm">
-              <p className="text-ink/60">1 prestación · {durationLabel}</p>
-              <p className="text-lg font-semibold">{priceLabel}</p>
+              <p className="text-ink/60">1 prestación · <span className="font-mono">{durationLabel}</span></p>
+              <p className="font-mono text-lg font-semibold text-clay">{priceLabel}</p>
             </div>
           </div>
         )}
@@ -232,7 +232,7 @@ export default function ReservationForm({
       <button
         type="submit"
         disabled={!selectedStart}
-        className="border border-ink bg-ink px-6 py-3 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-white hover:text-ink disabled:cursor-not-allowed disabled:border-line disabled:bg-line disabled:text-ink/40 disabled:hover:bg-line disabled:hover:text-ink/40"
+        className="border border-ink bg-ink px-6 py-3 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-paper hover:text-ink disabled:cursor-not-allowed disabled:border-line disabled:bg-line disabled:text-ink/40 disabled:hover:bg-line disabled:hover:text-ink/40"
       >
         {selectedStart ? "Confirmar la cita" : "Elige un horario para continuar"}
       </button>

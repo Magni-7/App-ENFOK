@@ -34,7 +34,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Catálogo de estilos</h1>
+        <h1 className="font-serif text-2xl font-semibold tracking-tight">Catálogo de estilos</h1>
         <p className="mt-2 text-sm text-ink/70">
           {q
             ? `Resultados para "${q}"`

@@ -8,15 +8,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#0a0a0a",
-        paper: "#ffffff",
-        cream: "#faf6f1",
-        mist: "#f0ebe3",
-        line: "#e6ddd0",
-        clay: "#b25d3b",
+        ink: "#18140f",
+        paper: "#f4efe2",
+        cream: "#faf6ee",
+        mist: "#ece3d0",
+        line: "#ddd0b3",
+        clay: "#8a3324",
+        fern: "#4b6b52",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
     },
   },

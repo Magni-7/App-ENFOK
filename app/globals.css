@@ -2,20 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --font-sans: "Helvetica Neue", Arial, sans-serif;
-}
-
 html {
   color-scheme: light;
 }
 
 body {
-  background-color: #ffffff;
-  color: #0a0a0a;
+  background-color: #f4efe2;
+  color: #18140f;
 }
 
 ::selection {
-  background-color: #b25d3b;
+  background-color: #8a3324;
   color: #ffffff;
 }

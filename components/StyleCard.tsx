@@ -26,8 +26,8 @@ export default function StyleCard({ id, name, photoUrl, basePriceCents, duration
         />
       </div>
       <div className="p-4">
-        <h3 className="text-base font-medium">{name}</h3>
-        <p className="mt-1 text-sm text-ink/70">
+        <h3 className="font-serif text-base font-medium">{name}</h3>
+        <p className="mt-1 font-mono text-xs text-ink/70">
           {formatPriceFrom(basePriceCents)} · {formatDuration(durationMinutes)}
         </p>
       </div>

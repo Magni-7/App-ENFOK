@@ -36,7 +36,10 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col gap-12">
       <section className="text-center">
-        <h1 className="text-3xl font-semibold tracking-tight">Reserva tu estilo de trenzas</h1>
+        <p className="font-mono text-xs uppercase tracking-[0.15em] text-clay">Trenzame · Barcelona</p>
+        <h1 className="mt-2 text-balance font-serif text-4xl font-semibold tracking-tight">
+          Cada <em className="text-clay not-italic">raya</em>, un plan.
+        </h1>
         <p className="mx-auto mt-3 max-w-md text-ink/70">
           {professional.displayName} te acompaña para conseguir un estilo de trenzas preciso, pensado
           para tu longitud de cabello y tu estilo de vida.
@@ -48,7 +51,7 @@ export default async function HomePage() {
       </section>
 
       <section>
-        <h2 className="mb-4 text-sm uppercase tracking-widest text-ink/60">Categorías</h2>
+        <h2 className="mb-4 font-mono text-xs uppercase tracking-widest text-ink/60">Categorías</h2>
         <div className="flex gap-5 overflow-x-auto pb-1">
           {categories.map((category) => (
             <CategoryAvatar
@@ -63,7 +66,7 @@ export default async function HomePage() {
 
       <section>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm uppercase tracking-widest text-ink/60">Estilos destacados</h2>
+          <h2 className="font-mono text-xs uppercase tracking-widest text-ink/60">Estilos destacados</h2>
           <Link href="/catalogue" className="text-sm underline underline-offset-4 hover:no-underline">
             Ver todo
           </Link>
