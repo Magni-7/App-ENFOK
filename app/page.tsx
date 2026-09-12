@@ -41,8 +41,7 @@ export default async function HomePage() {
           Cada <em className="text-clay not-italic">raya</em>, un plan.
         </h1>
         <p className="mx-auto mt-3 max-w-md text-ink/70">
-          {professional.displayName} te acompaña para conseguir un estilo de trenzas preciso, pensado
-          para tu longitud de cabello y tu estilo de vida.
+          Reserva tu cita de trenzas con profesionales verificadas en Barcelona.
         </p>
       </section>
 

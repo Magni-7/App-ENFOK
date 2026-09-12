@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { getDefaultProfessional } from "@/lib/professional";
 
 export const metadata: Metadata = {
   title: "Galería — Trenzame",
@@ -9,13 +10,19 @@ export const metadata: Metadata = {
 const PHOTO_COUNT = 27;
 const photos = Array.from({ length: PHOTO_COUNT }, (_, i) => `/images/gallery/eva/eva-${String(i + 1).padStart(2, "0")}.jpg`);
 
-export default function GaleriaPage() {
+export default async function GaleriaPage() {
+  const professional = await getDefaultProfessional();
+
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Galería</h1>
+        <h1 className="font-serif text-2xl font-semibold tracking-tight">{professional.displayName}</h1>
         <p className="mt-2 text-sm text-ink/70">
-          Una selección de trabajos reales de Eva. Los estilos del catálogo se irán actualizando
+          {professional.displayName} te acompaña para conseguir un estilo de trenzas preciso, pensado
+          para tu longitud de cabello y tu estilo de vida.
+        </p>
+        <p className="mt-1 text-sm text-ink/50">
+          Una selección de trabajos reales. Los estilos del catálogo se irán actualizando
           progresivamente con estas fotos.
         </p>
       </div>
