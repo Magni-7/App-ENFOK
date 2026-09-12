@@ -25,6 +25,13 @@ const ICONS = {
       strokeLinejoin="round"
     />
   ),
+  image: (
+    <>
+      <rect x="3" y="4" width="18" height="16" rx="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="m3 16 5-5 4 4 3-3 6 6" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="8" cy="9" r="1.3" />
+    </>
+  ),
 };
 
 export default function BottomNav() {
@@ -38,6 +45,7 @@ export default function BottomNav() {
       icon: ICONS.grid,
       active: pathname.startsWith("/catalogue") || pathname.startsWith("/styles"),
     },
+    { href: "/galeria", label: "Galería", icon: ICONS.image, active: pathname.startsWith("/galeria") },
     { href: "/admin", label: "Zona pro", icon: ICONS.user, active: pathname.startsWith("/admin") },
   ];
 
