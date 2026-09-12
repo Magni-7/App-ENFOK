@@ -1,4 +1,4 @@
-# BraidHub — App de réservation de tresses (V1)
+# Trenzame — App de réservation de tresses (V1)
 
 Plateforme de réservation de rendez-vous pour les tresses. Eva (@braidingeva,
 à Barcelone) est la première professionnelle sur l'app ; le schéma de données

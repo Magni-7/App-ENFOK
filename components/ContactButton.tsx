@@ -28,7 +28,7 @@ export default function ContactButton({
           href={whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center border border-ink bg-ink px-6 py-3 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-white hover:text-ink"
+          className="inline-flex items-center justify-center border border-[#25D366] bg-[#25D366] px-6 py-3 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-white hover:text-[#25D366]"
         >
           Diseño personalizado — WhatsApp
         </a>

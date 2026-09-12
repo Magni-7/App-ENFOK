@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 
 export const metadata: Metadata = {
-  title: "BraidHub — Reserva tu cita de trenzas",
+  title: "Trenzame — Reserva tu cita de trenzas",
   description: "Reserva tu cita de trenzas con profesionales verificadas. Empieza con Eva en Barcelona.",
 };
 
