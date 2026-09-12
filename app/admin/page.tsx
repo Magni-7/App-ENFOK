@@ -4,7 +4,13 @@ import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
 import { COOKIE_NAME, isValidSessionCookieValue } from "@/lib/adminSession";
 import { formatSlotDate, formatSlotTime } from "@/lib/format";
-import { updateDaysOff, logout } from "./actions";
+import { updateSchedule, logout } from "./actions";
+
+function minutesToTimeInput(minutes: number): string {
+  const h = Math.floor(minutes / 60) % 24;
+  const m = minutes % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
 
 const WEEKDAYS = [
   { value: 1, label: "Lunes" },
@@ -75,13 +81,35 @@ export default async function AdminPage() {
       </section>
 
       <section className="border-t border-line pt-8">
-        <h2 className="mb-1 text-sm uppercase tracking-widest text-ink/60">Días de descanso</h2>
+        <h2 className="mb-1 text-sm uppercase tracking-widest text-ink/60">Horario de trabajo</h2>
         <p className="mb-4 text-sm text-ink/60">
-          Los días marcados no se ofrecerán como horario disponible en las reservas. El resto de días
-          quedan abiertos de {Math.floor(professional.workDayStartMinutes / 60)}h a{" "}
-          {Math.floor(professional.workDayEndMinutes / 60)}h.
+          Define tu horario habitual y tus días de descanso. Fuera de estos horarios, las clientas no
+          podrán reservar.
         </p>
-        <form action={updateDaysOff} className="flex flex-col gap-4">
+        <form action={updateSchedule} className="flex flex-col gap-6">
+          <div className="flex flex-wrap items-end gap-4">
+            <label className="flex flex-col gap-1 text-sm">
+              Hora de inicio
+              <input
+                type="time"
+                name="workDayStart"
+                required
+                defaultValue={minutesToTimeInput(professional.workDayStartMinutes)}
+                className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              Hora de fin
+              <input
+                type="time"
+                name="workDayEnd"
+                required
+                defaultValue={minutesToTimeInput(professional.workDayEndMinutes)}
+                className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
+              />
+            </label>
+          </div>
+
           <div className="flex flex-wrap gap-4">
             {WEEKDAYS.map((day) => (
               <label key={day.value} className="flex items-center gap-2 text-sm">
