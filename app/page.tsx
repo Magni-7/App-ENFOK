@@ -38,7 +38,7 @@ export default async function HomePage() {
       <section className="text-center">
         <p className="font-mono text-xs uppercase tracking-[0.15em] text-clay">Trenzame · Barcelona</p>
         <h1 className="mt-2 text-balance font-serif text-4xl font-semibold tracking-tight">
-          Cada <em className="text-clay not-italic">raya</em>, un plan.
+          Cada <em className="text-clay not-italic">trenza</em>, un plan.
         </h1>
         <p className="mx-auto mt-3 max-w-md text-ink/70">
           Reserva tu cita de trenzas con profesionales verificadas en Barcelona.
