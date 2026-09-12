@@ -266,35 +266,12 @@ async function main() {
     });
   }
 
-  // Quelques créneaux disponibles sur les prochains jours, pour pouvoir
-  // tester le flux de réservation de bout en bout.
-  const now = new Date();
-  const slotsToCreate: { startAt: Date; endAt: Date }[] = [];
+  // Les créneaux ne sont plus pré-générés : ils sont calculés à la volée
+  // (voir lib/availability.ts) à partir de la fenêtre de travail du
+  // professionnel (workDayStartMinutes/workDayEndMinutes, 9h-20h par défaut)
+  // et des rendez-vous déjà confirmés. Rien à seeder ici.
 
-  for (let dayOffset = 1; dayOffset <= 10; dayOffset++) {
-    const day = new Date(now);
-    day.setDate(day.getDate() + dayOffset);
-    // On saute le dimanche (jour de repos par défaut, à ajuster avec Eva)
-    if (day.getDay() === 0) continue;
-
-    for (const hour of [9, 13, 16]) {
-      const startAt = new Date(day);
-      startAt.setHours(hour, 0, 0, 0);
-      const endAt = new Date(startAt);
-      endAt.setHours(startAt.getHours() + 4);
-      slotsToCreate.push({ startAt, endAt });
-    }
-  }
-
-  await prisma.slot.createMany({
-    data: slotsToCreate.map((s) => ({
-      professionalId: eva.id,
-      startAt: s.startAt,
-      endAt: s.endAt,
-    })),
-  });
-
-  console.log(`Seed terminé : professionnel "${eva.displayName}", ${styles.length} styles, ${slotsToCreate.length} créneaux.`);
+  console.log(`Seed terminé : professionnel "${eva.displayName}", ${styles.length} styles.`);
 }
 
 main()

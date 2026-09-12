@@ -32,25 +32,20 @@ export async function logout(): Promise<void> {
   redirect("/admin/login");
 }
 
-export async function addSlot(formData: FormData): Promise<void> {
-  const date = String(formData.get("date") ?? "");
-  const startTime = String(formData.get("startTime") ?? "");
-  const durationMinutes = Number(formData.get("durationMinutes") ?? 0);
-
-  if (!date || !startTime || !durationMinutes) {
-    throw new Error("Por favor indica una fecha, una hora de inicio y una duración.");
-  }
+// Les jours sont soumis comme des cases à cocher "dayOff" (0 = dimanche ..
+// 6 = samedi, voir Date.getDay()) : seuls les jours cochés sont présents
+// dans formData, on reconstruit donc la liste complète des jours de repos.
+export async function updateDaysOff(formData: FormData): Promise<void> {
+  const daysOff = formData
+    .getAll("dayOff")
+    .map((value) => Number(value))
+    .filter((value) => Number.isInteger(value) && value >= 0 && value <= 6);
 
   const professional = await getDefaultProfessional();
-  const startAt = new Date(`${date}T${startTime}:00`);
-  const endAt = new Date(startAt.getTime() + durationMinutes * 60_000);
 
-  await prisma.slot.create({
-    data: {
-      professionalId: professional.id,
-      startAt,
-      endAt,
-    },
+  await prisma.professional.update({
+    where: { id: professional.id },
+    data: { daysOff },
   });
 
   redirect("/admin");
