@@ -12,6 +12,9 @@ export default function Header() {
           <Link href="/catalogue" className="hover:opacity-60">
             Catálogo
           </Link>
+          <Link href="/galeria" className="hover:opacity-60">
+            Galería
+          </Link>
           <Link href="/admin" className="hover:opacity-60">
             Zona profesional
           </Link>
