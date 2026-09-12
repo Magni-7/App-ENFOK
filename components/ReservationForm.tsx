@@ -41,25 +41,28 @@ export default function ReservationForm({
   starts,
   createBooking,
 }: ReservationFormProps) {
-  const startsByDay = useMemo(() => {
-    const map = new Map<string, Date>();
-    for (const iso of starts) {
-      const date = new Date(iso);
-      map.set(dayKey(date), date);
-    }
-    return map;
-  }, [starts]);
-
-  const sortedDates = useMemo(
+  const parsedStarts = useMemo(
     () => starts.map((iso) => new Date(iso)).sort((a, b) => a.getTime() - b.getTime()),
     [starts]
   );
 
-  const firstDate = sortedDates[0] ?? new Date();
-  const lastDate = sortedDates[sortedDates.length - 1] ?? firstDate;
+  const startsByDay = useMemo(() => {
+    const map = new Map<string, Date[]>();
+    for (const date of parsedStarts) {
+      const key = dayKey(date);
+      const existing = map.get(key);
+      if (existing) existing.push(date);
+      else map.set(key, [date]);
+    }
+    return map;
+  }, [parsedStarts]);
+
+  const firstDate = parsedStarts[0] ?? new Date();
+  const lastDate = parsedStarts[parsedStarts.length - 1] ?? firstDate;
 
   const [viewedMonth, setViewedMonth] = useState(() => startOfMonth(firstDate));
   const [selectedDayKey, setSelectedDayKey] = useState<string | null>(() => dayKey(firstDate));
+  const [selectedStart, setSelectedStart] = useState<Date | null>(null);
 
   const canGoPrev = monthKey(viewedMonth) > monthKey(startOfMonth(firstDate));
   const canGoNext = monthKey(viewedMonth) < monthKey(startOfMonth(lastDate));
@@ -76,7 +79,7 @@ export default function ReservationForm({
     return cells;
   }, [viewedMonth]);
 
-  const selectedStart = selectedDayKey ? startsByDay.get(selectedDayKey) ?? null : null;
+  const selectedDayStarts = selectedDayKey ? startsByDay.get(selectedDayKey) ?? [] : [];
 
   return (
     <form action={createBooking} className="flex flex-col gap-8">
@@ -122,25 +125,28 @@ export default function ReservationForm({
           {calendarCells.map((day, i) => {
             if (!day) return <div key={`empty-${i}`} />;
             const key = dayKey(day);
-            const hasStart = startsByDay.has(key);
+            const hasStarts = (startsByDay.get(key) ?? []).length > 0;
             const isSelected = key === selectedDayKey;
             const past = isPastDay(day);
             return (
               <button
                 key={key}
                 type="button"
-                disabled={!hasStart}
-                onClick={() => setSelectedDayKey(key)}
+                disabled={!hasStarts}
+                onClick={() => {
+                  setSelectedDayKey(key);
+                  setSelectedStart(null);
+                }}
                 className={`flex aspect-square flex-col items-center justify-center gap-1 rounded-full border text-sm transition ${
                   isSelected
                     ? "border-ink bg-ink text-white"
-                    : hasStart
+                    : hasStarts
                       ? "border-line hover:border-ink"
                       : `border-transparent text-ink/25 ${past ? "line-through" : ""}`
                 }`}
               >
                 <span>{day.getDate()}</span>
-                {hasStart && (
+                {hasStarts && (
                   <span
                     className={`h-1.5 w-1.5 rounded-full ${isSelected ? "bg-white" : "bg-[#4a9d6f]"}`}
                   />
@@ -150,20 +156,29 @@ export default function ReservationForm({
           })}
         </div>
 
-        {selectedStart && (
+        {selectedDayStarts.length > 0 && (
           <div className="flex flex-wrap gap-2 border-t border-line pt-4">
-            <span className="rounded-full border border-ink bg-ink px-5 py-2.5 text-sm font-medium text-white">
-              {timeFormatter.format(selectedStart)}
-            </span>
+            {selectedDayStarts.map((start) => (
+              <button
+                key={start.toISOString()}
+                type="button"
+                onClick={() => setSelectedStart(start)}
+                className={`rounded-full border px-5 py-2.5 text-sm font-medium transition ${
+                  selectedStart?.getTime() === start.getTime()
+                    ? "border-ink bg-ink text-white"
+                    : "border-line hover:border-ink"
+                }`}
+              >
+                {timeFormatter.format(start)}
+              </button>
+            ))}
           </div>
         )}
 
         {selectedStart && (
           <div className="flex items-center justify-between gap-4 border-t border-line pt-4">
             <div className="text-sm">
-              <p className="text-ink/60">
-                1 prestación · {durationLabel}
-              </p>
+              <p className="text-ink/60">1 prestación · {durationLabel}</p>
               <p className="text-lg font-semibold">{priceLabel}</p>
             </div>
           </div>

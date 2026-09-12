@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { formatPriceFrom, formatDuration } from "@/lib/format";
-import { getNextAvailableStarts } from "@/lib/availability";
+import { getAvailableStarts } from "@/lib/availability";
 import ReservationForm from "@/components/ReservationForm";
 import { createBooking } from "./actions";
 
@@ -20,7 +20,7 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
     notFound();
   }
 
-  const availableStarts = await getNextAvailableStarts(style.professionalId, style.durationMinutes);
+  const availableStarts = await getAvailableStarts(style.professionalId, style.durationMinutes);
 
   return (
     <div className="flex flex-col gap-8">
@@ -45,7 +45,7 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
           styleId={style.id}
           durationLabel={formatDuration(style.durationMinutes)}
           priceLabel={formatPriceFrom(style.basePriceCents)}
-          starts={availableStarts.map((s) => s.startAt.toISOString())}
+          starts={availableStarts.map((d) => d.toISOString())}
           createBooking={createBooking}
         />
       )}

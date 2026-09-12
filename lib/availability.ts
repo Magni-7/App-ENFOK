@@ -1,14 +1,11 @@
 import { prisma } from "@/lib/prisma";
 
-export type AvailableStart = {
-  startAt: Date;
-  endAt: Date;
-};
-
 type BusyInterval = {
   start: number; // minutes depuis minuit du jour concerné
-  end: number;
+  end: number; // fin réelle + marge de sécurité (voir bufferMinutes)
 };
+
+const SLOT_STEP_MINUTES = 60;
 
 function minutesSinceMidnight(date: Date): number {
   return date.getHours() * 60 + date.getMinutes();
@@ -25,24 +22,24 @@ function addMinutes(date: Date, minutes: number): Date {
 }
 
 /**
- * Calcule, pour les `daysAhead` prochains jours, le premier horaire de début
- * disponible par jour pour un rendez-vous de `durationMinutes`. Un rendez-vous
- * occupe sa durée réelle + `bufferMinutes` (marge de retard) de la
- * professionnelle, tous styles confondus — un jour peut donc afficher un seul
- * horaire proposé (le premier créneau libre assez grand), pas tous les
- * horaires possibles minute par minute.
+ * Calcule, pour les `daysAhead` prochains jours, tous les horaires de début
+ * disponibles (par pas d'une heure entre l'ouverture et la fermeture) pour un
+ * rendez-vous de `durationMinutes`. Un rendez-vous occupe sa durée réelle +
+ * `bufferMinutes` (marge de retard) de la professionnelle, tous styles
+ * confondus : réserver un créneau bloque automatiquement les horaires qui
+ * chevaucheraient ce rendez-vous pour les autres client·es.
  */
-export async function getNextAvailableStarts(
+export async function getAvailableStarts(
   professionalId: string,
   durationMinutes: number,
   { daysAhead = 45, fromDate = new Date() }: { daysAhead?: number; fromDate?: Date } = {}
-): Promise<AvailableStart[]> {
+): Promise<Date[]> {
   const professional = await prisma.professional.findUniqueOrThrow({
     where: { id: professionalId },
   });
 
   const rangeStart = startOfDay(fromDate);
-  const rangeEnd = addMinutes(startOfDay(fromDate), (daysAhead + 1) * 24 * 60);
+  const rangeEnd = addMinutes(rangeStart, (daysAhead + 1) * 24 * 60);
 
   const existingBookings = await prisma.booking.findMany({
     where: {
@@ -55,8 +52,7 @@ export async function getNextAvailableStarts(
 
   const busyByDay = new Map<string, BusyInterval[]>();
   for (const booking of existingBookings) {
-    const day = startOfDay(booking.slot.startAt);
-    const key = day.toISOString();
+    const key = startOfDay(booking.slot.startAt).toISOString();
     const start = minutesSinceMidnight(booking.slot.startAt);
     const end = start + booking.style.durationMinutes + professional.bufferMinutes;
     const list = busyByDay.get(key) ?? [];
@@ -64,38 +60,31 @@ export async function getNextAvailableStarts(
     busyByDay.set(key, list);
   }
 
-  const results: AvailableStart[] = [];
+  const results: Date[] = [];
 
   for (let i = 0; i < daysAhead; i++) {
-    const day = addMinutes(startOfDay(fromDate), i * 24 * 60);
+    const day = addMinutes(rangeStart, i * 24 * 60);
     if (professional.daysOff.includes(day.getDay())) continue;
 
-    const isToday = day.getTime() === startOfDay(fromDate).getTime();
-    const dayFloor = isToday
-      ? Math.max(professional.workDayStartMinutes, minutesSinceMidnight(fromDate))
-      : professional.workDayStartMinutes;
+    const isToday = day.getTime() === rangeStart.getTime();
+    const busy = busyByDay.get(day.toISOString()) ?? [];
 
-    const busy = (busyByDay.get(day.toISOString()) ?? []).sort((a, b) => a.start - b.start);
+    for (
+      let candidateStart = professional.workDayStartMinutes;
+      candidateStart + durationMinutes <= professional.workDayEndMinutes;
+      candidateStart += SLOT_STEP_MINUTES
+    ) {
+      const candidateEnd = candidateStart + durationMinutes;
+      const candidateBufferedEnd = candidateEnd + professional.bufferMinutes;
 
-    let cursor = dayFloor;
-    let found: number | null = null;
+      if (isToday && candidateStart < minutesSinceMidnight(fromDate)) continue;
 
-    for (const interval of busy) {
-      const gapEnd = Math.min(interval.start, professional.workDayEndMinutes);
-      if (gapEnd - cursor >= durationMinutes) {
-        found = cursor;
-        break;
-      }
-      cursor = Math.max(cursor, interval.end);
-    }
+      const overlaps = busy.some(
+        (b) => candidateStart < b.end && b.start < candidateBufferedEnd
+      );
+      if (overlaps) continue;
 
-    if (found === null && professional.workDayEndMinutes - cursor >= durationMinutes) {
-      found = cursor;
-    }
-
-    if (found !== null) {
-      const startAt = addMinutes(day, found);
-      results.push({ startAt, endAt: addMinutes(startAt, durationMinutes) });
+      results.push(addMinutes(day, candidateStart));
     }
   }
 
