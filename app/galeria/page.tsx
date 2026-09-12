@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { getDefaultProfessional } from "@/lib/professional";
 
+// Contenu lié au professionnel (nom, bio) : ne doit pas être figé au build.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Galería — Trenzame",
   description: "Trabajos reales de Eva: una selección de trenzas y diseños realizados en el salón.",

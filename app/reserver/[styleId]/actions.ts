@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getCurrentClient } from "@/lib/clientAuth";
 
 export async function createBooking(formData: FormData): Promise<void> {
   const styleId = String(formData.get("styleId") ?? "");
@@ -20,6 +21,7 @@ export async function createBooking(formData: FormData): Promise<void> {
     throw new Error("Horario inválido.");
   }
 
+  const client = await getCurrentClient();
   const style = await prisma.style.findUniqueOrThrow({ where: { id: styleId } });
   const professional = await prisma.professional.findUniqueOrThrow({
     where: { id: style.professionalId },
@@ -55,6 +57,7 @@ export async function createBooking(formData: FormData): Promise<void> {
         professionalId: style.professionalId,
         styleId,
         slotId: slot.id,
+        clientId: client?.id,
         clientName,
         clientPhone,
         clientEmail: clientEmail || null,

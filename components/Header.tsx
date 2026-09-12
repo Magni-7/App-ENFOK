@@ -10,13 +10,16 @@ export default function Header() {
         </Link>
         <nav className="flex items-center gap-6 text-sm">
           <Link href="/catalogue" className="hover:opacity-60">
-            Catálogo
+            Descubrir
           </Link>
           <Link href="/galeria" className="hover:opacity-60">
             Galería
           </Link>
-          <Link href="/admin" className="hover:opacity-60">
-            Zona profesional
+          <Link href="/cuenta/citas" className="hover:opacity-60">
+            Mis citas
+          </Link>
+          <Link href="/cuenta" className="hover:opacity-60">
+            Perfil
           </Link>
         </nav>
       </div>
