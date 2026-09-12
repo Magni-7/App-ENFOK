@@ -1,15 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
-
-type SlotOption = {
-  id: string;
-  startAt: string;
-};
 
 type ReservationFormProps = {
   styleId: string;
-  slots: SlotOption[];
+  durationLabel: string;
+  priceLabel: string;
+  starts: string[];
   createBooking: (formData: FormData) => void;
 };
 
@@ -30,35 +28,44 @@ function startOfMonth(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), 1);
 }
 
-export default function ReservationForm({ styleId, slots, createBooking }: ReservationFormProps) {
-  const parsedSlots = useMemo(
-    () =>
-      slots
-        .map((slot) => ({ ...slot, date: new Date(slot.startAt) }))
-        .sort((a, b) => a.date.getTime() - b.date.getTime()),
-    [slots]
+function isPastDay(date: Date): boolean {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return date.getTime() < today.getTime();
+}
+
+export default function ReservationForm({
+  styleId,
+  durationLabel,
+  priceLabel,
+  starts,
+  createBooking,
+}: ReservationFormProps) {
+  const parsedStarts = useMemo(
+    () => starts.map((iso) => new Date(iso)).sort((a, b) => a.getTime() - b.getTime()),
+    [starts]
   );
 
-  const slotsByDay = useMemo(() => {
-    const map = new Map<string, typeof parsedSlots>();
-    for (const slot of parsedSlots) {
-      const key = dayKey(slot.date);
+  const startsByDay = useMemo(() => {
+    const map = new Map<string, Date[]>();
+    for (const date of parsedStarts) {
+      const key = dayKey(date);
       const existing = map.get(key);
-      if (existing) existing.push(slot);
-      else map.set(key, [slot]);
+      if (existing) existing.push(date);
+      else map.set(key, [date]);
     }
     return map;
-  }, [parsedSlots]);
+  }, [parsedStarts]);
 
-  const firstSlotDate = parsedSlots[0]?.date ?? new Date();
-  const lastSlotDate = parsedSlots[parsedSlots.length - 1]?.date ?? firstSlotDate;
+  const firstDate = parsedStarts[0] ?? new Date();
+  const lastDate = parsedStarts[parsedStarts.length - 1] ?? firstDate;
 
-  const [viewedMonth, setViewedMonth] = useState(() => startOfMonth(firstSlotDate));
-  const [selectedDayKey, setSelectedDayKey] = useState<string | null>(() => dayKey(firstSlotDate));
-  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  const [viewedMonth, setViewedMonth] = useState(() => startOfMonth(firstDate));
+  const [selectedDayKey, setSelectedDayKey] = useState<string | null>(() => dayKey(firstDate));
+  const [selectedStart, setSelectedStart] = useState<Date | null>(null);
 
-  const canGoPrev = monthKey(viewedMonth) > monthKey(startOfMonth(firstSlotDate));
-  const canGoNext = monthKey(viewedMonth) < monthKey(startOfMonth(lastSlotDate));
+  const canGoPrev = monthKey(viewedMonth) > monthKey(startOfMonth(firstDate));
+  const canGoNext = monthKey(viewedMonth) < monthKey(startOfMonth(lastDate));
 
   const calendarCells = useMemo(() => {
     const year = viewedMonth.getFullYear();
@@ -72,12 +79,12 @@ export default function ReservationForm({ styleId, slots, createBooking }: Reser
     return cells;
   }, [viewedMonth]);
 
-  const selectedDaySlots = selectedDayKey ? slotsByDay.get(selectedDayKey) ?? [] : [];
+  const selectedDayStarts = selectedDayKey ? startsByDay.get(selectedDayKey) ?? [] : [];
 
   return (
     <form action={createBooking} className="flex flex-col gap-8">
       <input type="hidden" name="styleId" value={styleId} />
-      <input type="hidden" name="slotId" value={selectedSlotId ?? ""} />
+      <input type="hidden" name="startAt" value={selectedStart ? selectedStart.toISOString() : ""} />
 
       <fieldset className="flex flex-col gap-4">
         <legend className="mb-2 text-sm uppercase tracking-widest text-ink/60">
@@ -91,7 +98,7 @@ export default function ReservationForm({ styleId, slots, createBooking }: Reser
               type="button"
               disabled={!canGoPrev}
               onClick={() => setViewedMonth((m) => new Date(m.getFullYear(), m.getMonth() - 1, 1))}
-              className="flex h-8 w-8 items-center justify-center border border-line text-sm transition hover:border-ink disabled:cursor-not-allowed disabled:opacity-30"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-sm transition hover:border-ink disabled:cursor-not-allowed disabled:opacity-30"
               aria-label="Mes anterior"
             >
               ‹
@@ -100,7 +107,7 @@ export default function ReservationForm({ styleId, slots, createBooking }: Reser
               type="button"
               disabled={!canGoNext}
               onClick={() => setViewedMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1))}
-              className="flex h-8 w-8 items-center justify-center border border-line text-sm transition hover:border-ink disabled:cursor-not-allowed disabled:opacity-30"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-sm transition hover:border-ink disabled:cursor-not-allowed disabled:opacity-30"
               aria-label="Mes siguiente"
             >
               ›
@@ -118,29 +125,30 @@ export default function ReservationForm({ styleId, slots, createBooking }: Reser
           {calendarCells.map((day, i) => {
             if (!day) return <div key={`empty-${i}`} />;
             const key = dayKey(day);
-            const hasSlots = slotsByDay.has(key);
+            const hasStarts = (startsByDay.get(key) ?? []).length > 0;
             const isSelected = key === selectedDayKey;
+            const past = isPastDay(day);
             return (
               <button
                 key={key}
                 type="button"
-                disabled={!hasSlots}
+                disabled={!hasStarts}
                 onClick={() => {
                   setSelectedDayKey(key);
-                  setSelectedSlotId(null);
+                  setSelectedStart(null);
                 }}
-                className={`flex aspect-square flex-col items-center justify-center gap-1 border text-sm transition ${
+                className={`flex aspect-square flex-col items-center justify-center gap-1 rounded-full border text-sm transition ${
                   isSelected
                     ? "border-ink bg-ink text-white"
-                    : hasSlots
+                    : hasStarts
                       ? "border-line hover:border-ink"
-                      : "border-transparent text-ink/25"
+                      : `border-transparent text-ink/25 ${past ? "line-through" : ""}`
                 }`}
               >
                 <span>{day.getDate()}</span>
-                {hasSlots && (
+                {hasStarts && (
                   <span
-                    className={`h-1 w-1 rounded-full ${isSelected ? "bg-white" : "bg-ink/50"}`}
+                    className={`h-1.5 w-1.5 rounded-full ${isSelected ? "bg-white" : "bg-[#4a9d6f]"}`}
                   />
                 )}
               </button>
@@ -148,22 +156,31 @@ export default function ReservationForm({ styleId, slots, createBooking }: Reser
           })}
         </div>
 
-        {selectedDaySlots.length > 0 && (
+        {selectedDayStarts.length > 0 && (
           <div className="flex flex-wrap gap-2 border-t border-line pt-4">
-            {selectedDaySlots.map((slot) => (
+            {selectedDayStarts.map((start) => (
               <button
-                key={slot.id}
+                key={start.toISOString()}
                 type="button"
-                onClick={() => setSelectedSlotId(slot.id)}
-                className={`border px-4 py-2 text-sm transition ${
-                  selectedSlotId === slot.id
+                onClick={() => setSelectedStart(start)}
+                className={`rounded-full border px-5 py-2.5 text-sm font-medium transition ${
+                  selectedStart?.getTime() === start.getTime()
                     ? "border-ink bg-ink text-white"
                     : "border-line hover:border-ink"
                 }`}
               >
-                {timeFormatter.format(slot.date)}
+                {timeFormatter.format(start)}
               </button>
             ))}
+          </div>
+        )}
+
+        {selectedStart && (
+          <div className="flex items-center justify-between gap-4 border-t border-line pt-4">
+            <div className="text-sm">
+              <p className="text-ink/60">1 prestación · {durationLabel}</p>
+              <p className="text-lg font-semibold">{priceLabel}</p>
+            </div>
           </div>
         )}
       </fieldset>
@@ -214,11 +231,19 @@ export default function ReservationForm({ styleId, slots, createBooking }: Reser
 
       <button
         type="submit"
-        disabled={!selectedSlotId}
+        disabled={!selectedStart}
         className="border border-ink bg-ink px-6 py-3 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-white hover:text-ink disabled:cursor-not-allowed disabled:border-line disabled:bg-line disabled:text-ink/40 disabled:hover:bg-line disabled:hover:text-ink/40"
       >
-        {selectedSlotId ? "Confirmar la cita" : "Elige un horario para continuar"}
+        {selectedStart ? "Confirmar la cita" : "Elige un horario para continuar"}
       </button>
+
+      <p className="text-center text-xs text-ink/50">
+        Para gestionar tu cita, tus datos se comparten únicamente con Eva. Más información en la{" "}
+        <Link href="/privacidad" className="underline underline-offset-4 hover:no-underline">
+          política de privacidad
+        </Link>
+        .
+      </p>
     </form>
   );
 }

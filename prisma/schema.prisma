@@ -24,6 +24,21 @@ model Professional {
   instagramHandle     String?
   instagramDmUsername String?
   whatsappNumber      String?
+
+  // Disponibilité : fenêtre de travail quotidienne (en minutes depuis minuit,
+  // ex. 540 = 9h00, 1200 = 20h00), jours de repos (0 = dimanche .. 6 = samedi,
+  // comme Date.getDay()) et marge de sécurité ajoutée après chaque rendez-vous
+  // pour absorber les retards. Par défaut la fenêtre couvre les 24h (0-1440) :
+  // une nouvelle professionnelle démarre ouverte en continu et choisit
+  // ensuite ses propres horaires (Eva a déjà les siens, 9h-20h, définis dans
+  // le seed). Modifiable par chaque professionnelle elle-même une fois
+  // l'auto-inscription en place ; en attendant, Eva peut ajuster ses jours
+  // de repos depuis /admin.
+  workDayStartMinutes Int      @default(0)
+  workDayEndMinutes   Int      @default(1440)
+  daysOff             Int[]    @default([])
+  bufferMinutes       Int      @default(30)
+
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 

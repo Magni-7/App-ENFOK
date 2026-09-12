@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { formatPriceFrom } from "@/lib/format";
+import { formatPriceFrom, formatDuration } from "@/lib/format";
+import { getAvailableStarts } from "@/lib/availability";
 import ReservationForm from "@/components/ReservationForm";
 import { createBooking } from "./actions";
 
@@ -19,16 +20,7 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
     notFound();
   }
 
-  const now = new Date();
-  const slots = await prisma.slot.findMany({
-    where: {
-      professionalId: style.professionalId,
-      isBooked: false,
-      startAt: { gt: now },
-    },
-    orderBy: { startAt: "asc" },
-    take: 60,
-  });
+  const availableStarts = await getAvailableStarts(style.professionalId, style.durationMinutes);
 
   return (
     <div className="flex flex-col gap-8">
@@ -38,10 +30,12 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
 
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Reservar: {style.name}</h1>
-        <p className="mt-1 text-sm text-ink/70">{formatPriceFrom(style.basePriceCents)}</p>
+        <p className="mt-1 text-sm text-ink/70">
+          {formatPriceFrom(style.basePriceCents)} · {formatDuration(style.durationMinutes)}
+        </p>
       </div>
 
-      {slots.length === 0 ? (
+      {availableStarts.length === 0 ? (
         <p className="text-sm text-ink/60">
           No hay ningún horario disponible por ahora. Contacta directamente con Eva para acordar una
           fecha.
@@ -49,7 +43,9 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
       ) : (
         <ReservationForm
           styleId={style.id}
-          slots={slots.map((slot) => ({ id: slot.id, startAt: slot.startAt.toISOString() }))}
+          durationLabel={formatDuration(style.durationMinutes)}
+          priceLabel={formatPriceFrom(style.basePriceCents)}
+          starts={availableStarts.map((d) => d.toISOString())}
           createBooking={createBooking}
         />
       )}

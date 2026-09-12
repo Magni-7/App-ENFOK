@@ -32,25 +32,38 @@ export async function logout(): Promise<void> {
   redirect("/admin/login");
 }
 
-export async function addSlot(formData: FormData): Promise<void> {
-  const date = String(formData.get("date") ?? "");
-  const startTime = String(formData.get("startTime") ?? "");
-  const durationMinutes = Number(formData.get("durationMinutes") ?? 0);
+function timeToMinutes(value: string): number | null {
+  const match = /^(\d{1,2}):(\d{2})$/.exec(value);
+  if (!match) return null;
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  if (hours < 0 || hours > 24 || minutes < 0 || minutes > 59) return null;
+  return hours * 60 + minutes;
+}
 
-  if (!date || !startTime || !durationMinutes) {
-    throw new Error("Por favor indica una fecha, una hora de inicio y una duración.");
+// Les jours sont soumis comme des cases à cocher "dayOff" (0 = dimanche ..
+// 6 = samedi, voir Date.getDay()) : seuls les jours cochés sont présents
+// dans formData, on reconstruit donc la liste complète des jours de repos.
+// Les horaires (workDayStart/workDayEnd, format "HH:mm") définissent la
+// fenêtre de travail quotidienne de la professionnelle.
+export async function updateSchedule(formData: FormData): Promise<void> {
+  const daysOff = formData
+    .getAll("dayOff")
+    .map((value) => Number(value))
+    .filter((value) => Number.isInteger(value) && value >= 0 && value <= 6);
+
+  const workDayStartMinutes = timeToMinutes(String(formData.get("workDayStart") ?? ""));
+  const workDayEndMinutes = timeToMinutes(String(formData.get("workDayEnd") ?? ""));
+
+  if (workDayStartMinutes === null || workDayEndMinutes === null || workDayEndMinutes <= workDayStartMinutes) {
+    throw new Error("Por favor indica una hora de inicio y una hora de fin válidas (fin después de inicio).");
   }
 
   const professional = await getDefaultProfessional();
-  const startAt = new Date(`${date}T${startTime}:00`);
-  const endAt = new Date(startAt.getTime() + durationMinutes * 60_000);
 
-  await prisma.slot.create({
-    data: {
-      professionalId: professional.id,
-      startAt,
-      endAt,
-    },
+  await prisma.professional.update({
+    where: { id: professional.id },
+    data: { daysOff, workDayStartMinutes, workDayEndMinutes },
   });
 
   redirect("/admin");
