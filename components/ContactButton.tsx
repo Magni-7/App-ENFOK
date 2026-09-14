@@ -6,7 +6,7 @@ type ContactButtonProps = {
 };
 
 const DEFAULT_MESSAGE =
-  "¡Hola Eva! Me gustaría hablar sobre un estilo de trenzas personalizado, fuera de catálogo.";
+  "¡Hola! Me gustaría hablar sobre un estilo de trenzas personalizado, fuera de catálogo.";
 
 export default function ContactButton({
   whatsappNumber,

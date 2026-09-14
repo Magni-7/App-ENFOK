@@ -14,6 +14,7 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
   const { styleId } = await params;
   const style = await prisma.style.findUnique({
     where: { id: styleId },
+    include: { professional: true },
   });
 
   if (!style || !style.isActive) {
@@ -37,8 +38,8 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
 
       {availableStarts.length === 0 ? (
         <p className="text-sm text-ink/60">
-          No hay ningún horario disponible por ahora. Contacta directamente con Eva para acordar una
-          fecha.
+          No hay ningún horario disponible por ahora. Contacta directamente con {style.professional.displayName}{" "}
+          para acordar una fecha.
         </p>
       ) : (
         <ReservationForm
@@ -47,6 +48,7 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
           priceLabel={formatPriceFrom(style.basePriceCents)}
           starts={availableStarts.map((d) => d.toISOString())}
           createBooking={createBooking}
+          professionalName={style.professional.displayName}
         />
       )}
     </div>

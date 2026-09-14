@@ -83,6 +83,7 @@ export default async function HomePage() {
           <ContactButton
             whatsappNumber={professional.whatsappNumber}
             instagramUsername={professional.instagramDmUsername}
+            message={`¡Hola ${professional.displayName}! Me gustaría hablar sobre un estilo de trenzas personalizado, fuera de catálogo.`}
           />
         </div>
       </section>

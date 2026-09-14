@@ -33,5 +33,5 @@ export function formatSlotTime(date: Date): string {
 }
 
 export function formatHairProvider(hairProvidedBy: string): string {
-  return hairProvidedBy === "PROFESSIONAL" ? "Extensiones a cargo de Eva" : "Extensiones a cargo de la clienta";
+  return hairProvidedBy === "PROFESSIONAL" ? "Extensiones a cargo de la profesional" : "Extensiones a cargo de la clienta";
 }

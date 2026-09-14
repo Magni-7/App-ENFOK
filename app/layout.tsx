@@ -11,7 +11,7 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mon
 
 export const metadata: Metadata = {
   title: "Trenzame — Reserva tu cita de trenzas",
-  description: "Reserva tu cita de trenzas con profesionales verificadas. Empieza con Eva en Barcelona.",
+  description: "Reserva tu cita de trenzas con profesionales verificadas en Barcelona.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

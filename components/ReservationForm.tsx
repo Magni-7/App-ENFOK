@@ -9,6 +9,7 @@ type ReservationFormProps = {
   priceLabel: string;
   starts: string[];
   createBooking: (formData: FormData) => void;
+  professionalName: string;
 };
 
 const WEEKDAY_LABELS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
@@ -40,6 +41,7 @@ export default function ReservationForm({
   priceLabel,
   starts,
   createBooking,
+  professionalName,
 }: ReservationFormProps) {
   const parsedStarts = useMemo(
     () => starts.map((iso) => new Date(iso)).sort((a, b) => a.getTime() - b.getTime()),
@@ -220,7 +222,7 @@ export default function ReservationForm({
         </label>
 
         <label className="flex flex-col gap-1 text-sm">
-          Nota para Eva (opcional)
+          Nota para {professionalName} (opcional)
           <textarea
             name="notes"
             rows={3}
@@ -238,7 +240,8 @@ export default function ReservationForm({
       </button>
 
       <p className="text-center text-xs text-ink/50">
-        Para gestionar tu cita, tus datos se comparten únicamente con Eva. Más información en la{" "}
+        Para gestionar tu cita, tus datos se comparten únicamente con {professionalName}. Más información en
+        la{" "}
         <Link href="/privacidad" className="underline underline-offset-4 hover:no-underline">
           política de privacidad
         </Link>

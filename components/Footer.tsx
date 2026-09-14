@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-line">
       <div className="mx-auto max-w-3xl px-4 py-8 text-xs text-ink/60">
-        <p>Trenzame · con Eva como primera profesional en Barcelona</p>
+        <p>Trenzame · con ENFOK como primer salón en Barcelona</p>
         <p className="mt-1">Un proyecto ENFOK (@enfok.o)</p>
         <nav className="mt-4 flex flex-wrap gap-x-4 gap-y-1">
           <Link href="/aviso-legal" className="hover:text-ink">

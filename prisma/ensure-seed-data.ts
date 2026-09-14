@@ -15,10 +15,18 @@ async function main() {
 
   // Personne n'a encore laissé d'avis : remet la note à 0 plutôt que le
   // placeholder précédent (5), qui donnait une fausse impression.
-  // Met aussi à jour le vrai numéro de téléphone (WhatsApp) d'Eva.
+  // Le profil "Eva" est en réalité la marque ENFOK : corrige le nom affiché,
+  // le vrai numéro de téléphone (WhatsApp), l'email et l'Instagram.
   await prisma.professional.update({
     where: { id: professional.id },
-    data: { rating: 0, whatsappNumber: "34633779158", email: "enfoko.bcn@gmail.com" },
+    data: {
+      displayName: "ENFOK",
+      instagramHandle: "enfok.o",
+      instagramDmUsername: "enfok.o",
+      rating: 0,
+      whatsappNumber: "34633779158",
+      email: "enfoko.bcn@gmail.com",
+    },
   });
 
   await prisma.salon.upsert({

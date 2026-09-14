@@ -76,7 +76,7 @@ export default async function StylePage({ params }: StylePageProps) {
         <ContactButton
           whatsappNumber={style.professional.whatsappNumber}
           instagramUsername={style.professional.instagramDmUsername}
-          message={`¡Hola Eva! Me interesa una variante personalizada del estilo "${style.name}".`}
+          message={`¡Hola ${style.professional.displayName}! Me interesa una variante personalizada del estilo "${style.name}".`}
         />
       </div>
     </div>
