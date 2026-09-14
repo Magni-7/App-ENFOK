@@ -13,15 +13,22 @@ async function main() {
   });
   if (!professional) return;
 
+  // Personne n'a encore laissé d'avis : remet la note à 0 plutôt que le
+  // placeholder précédent (5), qui donnait une fausse impression.
+  if (professional.rating !== 0) {
+    await prisma.professional.update({ where: { id: professional.id }, data: { rating: 0 } });
+  }
+
   await prisma.salon.upsert({
     where: {
       professionalId_name: { professionalId: professional.id, name: "ENFOK.O Barbershop" },
     },
-    update: {},
+    update: { address: "Carrer de Carreras i Candi, 11, 08028 Barcelona" },
     create: {
       professionalId: professional.id,
       name: "ENFOK.O Barbershop",
       photoUrl: "/images/salons/enfoko-barbershop/local.jpg",
+      address: "Carrer de Carreras i Candi, 11, 08028 Barcelona",
       order: 1,
     },
   });

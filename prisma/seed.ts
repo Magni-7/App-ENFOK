@@ -39,8 +39,7 @@ async function main() {
       professionalId: eva.id,
       name: "ENFOK.O Barbershop",
       photoUrl: "/images/salons/enfoko-barbershop/local.jpg",
-      // Placeholder : adresse réelle à confirmer.
-      address: null,
+      address: "Carrer de Carreras i Candi, 11, 08028 Barcelona",
       order: 1,
     },
   });

@@ -26,8 +26,8 @@ model Professional {
   whatsappNumber      String?
 
   // Note affichée en étoiles (sur 5) sur le profil et la page d'accueil.
-  // Placeholder tant qu'il n'existe pas de vrai système d'avis clientes.
-  rating              Float    @default(5)
+  // 0 tant qu'aucune cliente n'a encore laissé d'avis (pas de faux chiffre).
+  rating              Float    @default(0)
 
   // Disponibilité : fenêtre de travail quotidienne (en minutes depuis minuit,
   // ex. 540 = 9h00, 1200 = 20h00), jours de repos (0 = dimanche .. 6 = samedi,
