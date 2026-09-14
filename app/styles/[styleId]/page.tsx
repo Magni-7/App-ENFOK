@@ -37,33 +37,33 @@ export default async function StylePage({ params }: StylePageProps) {
       </div>
 
       <div>
-        <p className="text-xs uppercase tracking-widest text-ink/50">{style.category.name}</p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight">{style.name}</h1>
+        <p className="font-mono text-xs uppercase tracking-widest text-clay">{style.category.name}</p>
+        <h1 className="mt-1 font-serif text-2xl font-semibold tracking-tight">{style.name}</h1>
         {style.description && <p className="mt-3 text-ink/80">{style.description}</p>}
       </div>
 
       <dl className="grid grid-cols-2 gap-4 border-y border-line py-6 text-sm sm:grid-cols-4">
         <div>
-          <dt className="text-ink/50">Precio</dt>
-          <dd className="mt-1 font-medium">{formatPriceFrom(style.basePriceCents)}</dd>
+          <dt className="font-mono text-xs uppercase tracking-wide text-ink/50">Precio</dt>
+          <dd className="mt-1 font-mono font-medium">{formatPriceFrom(style.basePriceCents)}</dd>
         </div>
         <div>
-          <dt className="text-ink/50">Duración estimada</dt>
-          <dd className="mt-1 font-medium">{formatDuration(style.durationMinutes)}</dd>
+          <dt className="font-mono text-xs uppercase tracking-wide text-ink/50">Duración estimada</dt>
+          <dd className="mt-1 font-mono font-medium">{formatDuration(style.durationMinutes)}</dd>
         </div>
         <div>
-          <dt className="text-ink/50">Longitud mínima</dt>
+          <dt className="font-mono text-xs uppercase tracking-wide text-ink/50">Longitud mínima</dt>
           <dd className="mt-1 font-medium">{style.minHairLength}</dd>
         </div>
         <div>
-          <dt className="text-ink/50">Extensiones</dt>
+          <dt className="font-mono text-xs uppercase tracking-wide text-ink/50">Extensiones</dt>
           <dd className="mt-1 font-medium">{formatHairProvider(style.hairProvidedBy)}</dd>
         </div>
       </dl>
 
       <Link
         href={`/reserver/${style.id}`}
-        className="inline-flex items-center justify-center border border-ink bg-ink px-6 py-3 text-center text-sm font-medium uppercase tracking-wide text-white transition hover:bg-white hover:text-ink"
+        className="inline-flex items-center justify-center border border-ink bg-ink px-6 py-3 text-center text-sm font-medium uppercase tracking-wide text-white transition hover:bg-paper hover:text-ink"
       >
         Reservar este estilo
       </Link>

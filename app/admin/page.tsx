@@ -126,7 +126,7 @@ export default async function AdminPage() {
           </div>
           <button
             type="submit"
-            className="self-start border border-ink bg-ink px-6 py-2 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-white hover:text-ink"
+            className="self-start border border-ink bg-ink px-6 py-2 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-paper hover:text-ink"
           >
             Guardar
           </button>

@@ -28,7 +28,7 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
 
         <button
           type="submit"
-          className="border border-ink bg-ink px-6 py-3 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-white hover:text-ink"
+          className="border border-ink bg-ink px-6 py-3 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-paper hover:text-ink"
         >
           Iniciar sesión
         </button>

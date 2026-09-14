@@ -24,7 +24,7 @@ export default async function MerciPage({ searchParams }: MerciPageProps) {
 
   return (
     <div className="flex flex-col items-center gap-6 py-12 text-center">
-      <h1 className="text-2xl font-semibold tracking-tight">¡Cita confirmada!</h1>
+      <h1 className="font-serif text-2xl font-semibold tracking-tight">¡Cita confirmada!</h1>
       <p className="text-ink/70">
         Gracias {booking.clientName}, tu cita con {booking.professional.displayName} ha sido
         registrada.

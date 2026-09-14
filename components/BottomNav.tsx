@@ -25,11 +25,10 @@ const ICONS = {
       strokeLinejoin="round"
     />
   ),
-  image: (
+  calendar: (
     <>
-      <rect x="3" y="4" width="18" height="16" rx="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="m3 16 5-5 4 4 3-3 6 6" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="8" cy="9" r="1.3" />
+      <rect x="3.5" y="5" width="17" height="16" rx="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.5 9.5h17M8 3v4M16 3v4" strokeLinecap="round" strokeLinejoin="round" />
     </>
   ),
 };
@@ -41,16 +40,21 @@ export default function BottomNav() {
     { href: "/", label: "Inicio", icon: ICONS.home, active: pathname === "/" },
     {
       href: "/catalogue",
-      label: "Catálogo",
+      label: "Descubrir",
       icon: ICONS.grid,
       active: pathname.startsWith("/catalogue") || pathname.startsWith("/styles"),
     },
-    { href: "/galeria", label: "Galería", icon: ICONS.image, active: pathname.startsWith("/galeria") },
-    { href: "/admin", label: "Zona pro", icon: ICONS.user, active: pathname.startsWith("/admin") },
+    { href: "/cuenta/citas", label: "Citas", icon: ICONS.calendar, active: pathname.startsWith("/cuenta/citas") },
+    {
+      href: "/cuenta",
+      label: "Perfil",
+      icon: ICONS.user,
+      active: pathname === "/cuenta" || pathname.startsWith("/cuenta/login"),
+    },
   ];
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-white/95 backdrop-blur sm:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-paper/95 backdrop-blur sm:hidden">
       <div className="mx-auto flex max-w-3xl items-center justify-around px-2 pb-[env(safe-area-inset-bottom)]">
         {items.map((item) => (
           <Link
