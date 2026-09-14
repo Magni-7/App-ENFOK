@@ -25,6 +25,10 @@ model Professional {
   instagramDmUsername String?
   whatsappNumber      String?
 
+  // Note affichée en étoiles (sur 5) sur le profil et la page d'accueil.
+  // Placeholder tant qu'il n'existe pas de vrai système d'avis clientes.
+  rating              Float    @default(5)
+
   // Disponibilité : fenêtre de travail quotidienne (en minutes depuis minuit,
   // ex. 540 = 9h00, 1200 = 20h00), jours de repos (0 = dimanche .. 6 = samedi,
   // comme Date.getDay()) et marge de sécurité ajoutée après chaque rendez-vous
@@ -46,6 +50,24 @@ model Professional {
   styles     Style[]
   slots      Slot[]
   bookings   Booking[]
+  salons     Salon[]
+}
+
+// Lieu physique où une professionnelle reçoit ses clientes (ex. un local
+// partagé avec un barbershop). Une professionnelle peut à terme travailler
+// depuis plusieurs lieux ; pour la V1 il n'y en a qu'un.
+model Salon {
+  id             String       @id @default(cuid())
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+  name           String
+  photoUrl       String
+  address        String?
+  description    String?
+  order          Int          @default(0)
+  createdAt      DateTime     @default(now())
+
+  @@unique([professionalId, name])
 }
 
 // Les catégories sont des données modifiables (pas un enum figé dans le

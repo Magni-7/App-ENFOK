@@ -15,6 +15,7 @@ async function main() {
   await prisma.stylePhoto.deleteMany({});
   await prisma.style.deleteMany({});
   await prisma.category.deleteMany({});
+  await prisma.salon.deleteMany({});
   await prisma.professional.deleteMany({});
 
   const eva = await prisma.professional.create({
@@ -30,6 +31,17 @@ async function main() {
       // les leurs elles-mêmes, le défaut du schéma est 24h/24 en attendant).
       workDayStartMinutes: 9 * 60,
       workDayEndMinutes: 20 * 60,
+    },
+  });
+
+  await prisma.salon.create({
+    data: {
+      professionalId: eva.id,
+      name: "ENFOK.O Barbershop",
+      photoUrl: "/images/salons/enfoko-barbershop/local.jpg",
+      // Placeholder : adresse réelle à confirmer.
+      address: null,
+      order: 1,
     },
   });
 

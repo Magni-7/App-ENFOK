@@ -2,8 +2,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
 import ContactButton from "@/components/ContactButton";
-import SearchBar from "@/components/SearchBar";
-import CategoryAvatar from "@/components/CategoryAvatar";
+import StarRating from "@/components/StarRating";
+import SalonCard from "@/components/SalonCard";
 import FeaturedStyleCard from "@/components/FeaturedStyleCard";
 
 // Les données (catégories, styles) changent en base y no deben quedar
@@ -13,17 +13,9 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const professional = await getDefaultProfessional();
 
-  const categories = await prisma.category.findMany({
+  const salons = await prisma.salon.findMany({
     where: { professionalId: professional.id },
     orderBy: { order: "asc" },
-    include: {
-      styles: {
-        where: { isActive: true },
-        orderBy: { order: "asc" },
-        take: 1,
-        include: { photos: { orderBy: { order: "asc" }, take: 1 } },
-      },
-    },
   });
 
   const featuredStyles = await prisma.style.findMany({
@@ -43,25 +35,26 @@ export default async function HomePage() {
         <p className="mx-auto mt-3 max-w-md text-ink/70">
           Reserva tu cita de trenzas con profesionales verificadas en Barcelona.
         </p>
+        <StarRating rating={professional.rating} className="mt-3 justify-center" />
       </section>
 
-      <section>
-        <SearchBar />
-      </section>
-
-      <section>
-        <h2 className="mb-4 font-mono text-xs uppercase tracking-widest text-ink/60">Categorías</h2>
-        <div className="flex gap-5 overflow-x-auto pb-1">
-          {categories.map((category) => (
-            <CategoryAvatar
-              key={category.slug}
-              slug={category.slug}
-              name={category.name}
-              photoUrl={category.styles[0]?.photos[0]?.url ?? null}
-            />
-          ))}
-        </div>
-      </section>
+      {salons.length > 0 && (
+        <section>
+          <h2 className="mb-4 font-mono text-xs uppercase tracking-widest text-ink/60">Nuestros salones</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {salons.map((salon) => (
+              <SalonCard
+                key={salon.id}
+                professionalSlug={professional.slug}
+                name={salon.name}
+                photoUrl={salon.photoUrl}
+                address={salon.address}
+                rating={professional.rating}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section>
         <div className="mb-4 flex items-center justify-between">
