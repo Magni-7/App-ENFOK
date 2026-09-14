@@ -2,7 +2,6 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
 import ContactButton from "@/components/ContactButton";
-import StarRating from "@/components/StarRating";
 import SalonCard from "@/components/SalonCard";
 import FeaturedStyleCard from "@/components/FeaturedStyleCard";
 
@@ -35,7 +34,6 @@ export default async function HomePage() {
         <p className="mx-auto mt-3 max-w-md text-ink/70">
           Reserva tu cita de trenzas con profesionales verificadas en Barcelona.
         </p>
-        <StarRating rating={professional.rating} className="mt-3 justify-center" />
       </section>
 
       {salons.length > 0 && (

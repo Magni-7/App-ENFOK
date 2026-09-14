@@ -18,7 +18,7 @@ async function main() {
   // Met aussi à jour le vrai numéro de téléphone (WhatsApp) d'Eva.
   await prisma.professional.update({
     where: { id: professional.id },
-    data: { rating: 0, whatsappNumber: "34633779158" },
+    data: { rating: 0, whatsappNumber: "34633779158", email: "enfoko.bcn@gmail.com" },
   });
 
   await prisma.salon.upsert({

@@ -26,6 +26,7 @@ async function main() {
       instagramHandle: "braidingeva",
       instagramDmUsername: "braidingeva",
       whatsappNumber: "34633779158",
+      email: "enfoko.bcn@gmail.com",
       // Horaires de base d'Eva : 9h-20h (les futures braideuses choisiront
       // les leurs elles-mêmes, le défaut du schéma est 24h/24 en attendant).
       workDayStartMinutes: 9 * 60,

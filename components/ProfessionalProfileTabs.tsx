@@ -4,8 +4,62 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import StarRating from "./StarRating";
-import ContactButton from "./ContactButton";
 import { formatDuration, formatPriceFrom } from "@/lib/format";
+
+function formatPhoneDisplay(whatsappNumber: string): string {
+  // Numéro stocké en format international sans espaces (ex. "34633779158").
+  // Affiche juste le numéro national par groupes de 3 chiffres (633 77 91 58).
+  const national = whatsappNumber.startsWith("34") ? whatsappNumber.slice(2) : whatsappNumber;
+  return national.replace(/(\d{3})(?=\d)/g, "$1 ").trim();
+}
+
+function PhoneIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5 text-ink/60">
+      <path
+        d="M5 4h3.5l1.5 4-2 1.5a11 11 0 0 0 5.5 5.5l1.5-2 4 1.5V18a2 2 0 0 1-2 2C10.5 20 4 13.5 4 6a2 2 0 0 1 1-2Z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5 text-ink/60">
+      <rect x="3" y="5" width="18" height="14" rx="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.5 6.5 12 13l8.5-6.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function InstagramIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5">
+      <rect x="3" y="3" width="18" height="18" rx="5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12" cy="12" r="4" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function WhatsAppIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5">
+      <path
+        d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3Z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M8.5 8.5c0 4 3 7 7 7 .8 0 .8-1.8.3-2.3l-1.5-.7-1 1c-1-.5-2-1.5-2.5-2.5l1-1-.7-1.5c-.5-.5-2.3-.5-2.3.3.3-.3.3.7.3.7Z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 type StyleItem = {
   id: string;
@@ -22,8 +76,8 @@ type ProfessionalProfileTabsProps = {
   rating: number;
   whatsappNumber: string | null;
   instagramHandle: string | null;
-  instagramDmUsername: string | null;
   address: string | null;
+  email: string | null;
   schedule: string;
   daysOffLabel: string | null;
   styles: StyleItem[];
@@ -38,8 +92,8 @@ export default function ProfessionalProfileTabs({
   rating,
   whatsappNumber,
   instagramHandle,
-  instagramDmUsername,
   address,
+  email,
   schedule,
   daysOffLabel,
   styles,
@@ -159,50 +213,71 @@ export default function ProfessionalProfileTabs({
             )}
 
             <div>
-              <h3 className="mb-2 font-mono text-xs uppercase tracking-widest text-ink/60">
-                Contacto y horario
-              </h3>
-              <dl className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
-                <div>
-                  <dt className="text-ink/50">Dirección</dt>
-                  <dd className="mt-1 font-medium">{address ?? "Próximamente"}</dd>
-                </div>
-                <div>
-                  <dt className="text-ink/50">Horario</dt>
-                  <dd className="mt-1 font-medium">
-                    {schedule}
-                    {daysOffLabel && <span className="block text-ink/60">Cerrado: {daysOffLabel}</span>}
-                  </dd>
-                </div>
-                {whatsappNumber && (
-                  <div>
-                    <dt className="text-ink/50">Teléfono</dt>
-                    <dd className="mt-1">
-                      <a href={`tel:+${whatsappNumber}`} className="font-medium underline underline-offset-4">
-                        +{whatsappNumber}
-                      </a>
-                    </dd>
-                  </div>
-                )}
-              </dl>
+              <h3 className="mb-2 font-mono text-xs uppercase tracking-widest text-ink/60">Horario</h3>
+              <p className="text-sm font-medium">{schedule}</p>
+              {daysOffLabel && <p className="text-sm text-ink/60">Cerrado: {daysOffLabel}</p>}
             </div>
 
-            <div className="flex flex-col gap-3">
-              <ContactButton
-                whatsappNumber={whatsappNumber}
-                instagramUsername={instagramDmUsername}
-                message={`¡Hola ${displayName}! Me gustaría más información.`}
-              />
-              {instagramProfileUrl && (
-                <a
-                  href={instagramProfileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-ink underline underline-offset-4 hover:no-underline"
-                >
-                  Ver perfil de Instagram (@{instagramHandle})
-                </a>
-              )}
+            <div>
+              <h3 className="mb-3 font-mono text-xs uppercase tracking-widest text-ink/60">
+                Información de la empresa
+              </h3>
+              <p className="mb-4 text-lg font-medium">{displayName}</p>
+
+              <div className="flex flex-col divide-y divide-line border-y border-line text-sm">
+                {whatsappNumber && (
+                  <div className="flex items-center justify-between gap-4 py-4">
+                    <div className="flex items-center gap-3">
+                      <PhoneIcon />
+                      <span className="font-medium">{formatPhoneDisplay(whatsappNumber)}</span>
+                    </div>
+                    <a
+                      href={`tel:+${whatsappNumber}`}
+                      className="shrink-0 rounded-full border border-line px-4 py-1.5 text-xs font-medium uppercase tracking-wide transition hover:border-ink"
+                    >
+                      Llamar
+                    </a>
+                  </div>
+                )}
+                {email && (
+                  <div className="flex items-center gap-3 py-4">
+                    <MailIcon />
+                    <a href={`mailto:${email}`} className="font-medium underline underline-offset-4 hover:no-underline">
+                      {email}
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="mb-3 font-mono text-xs uppercase tracking-widest text-ink/60">
+                Redes sociales y contacto
+              </h3>
+              <div className="flex items-center gap-4">
+                {instagramProfileUrl && (
+                  <a
+                    href={instagramProfileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-line transition hover:border-ink"
+                  >
+                    <InstagramIcon />
+                  </a>
+                )}
+                {whatsappNumber && (
+                  <a
+                    href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`¡Hola ${displayName}! Me gustaría más información.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="WhatsApp"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-[#25D366] text-[#25D366] transition hover:bg-[#25D366] hover:text-white"
+                  >
+                    <WhatsAppIcon />
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         )}

@@ -81,8 +81,8 @@ export default async function ProfessionalPage({ params }: ProfessionalPageProps
         rating={professional.rating}
         whatsappNumber={professional.whatsappNumber}
         instagramHandle={professional.instagramHandle}
-        instagramDmUsername={professional.instagramDmUsername}
         address={mainSalon?.address ?? null}
+        email={professional.email}
         schedule={schedule}
         daysOffLabel={daysOffLabel}
         styles={styles}

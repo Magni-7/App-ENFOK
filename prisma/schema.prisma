@@ -24,6 +24,7 @@ model Professional {
   instagramHandle     String?
   instagramDmUsername String?
   whatsappNumber      String?
+  email               String?
 
   // Note affichée en étoiles (sur 5) sur le profil et la page d'accueil.
   // 0 tant qu'aucune cliente n'a encore laissé d'avis (pas de faux chiffre).
