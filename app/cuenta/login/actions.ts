@@ -1,46 +1,32 @@
 "use server";
 
-import { randomBytes } from "crypto";
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { sendLoginEmail } from "@/lib/email";
+import { verifyPassword } from "@/lib/password";
+import { createClientSessionCookieValue, CLIENT_COOKIE_NAME } from "@/lib/clientSession";
 
-const TOKEN_TTL_MINUTES = 15;
-
-async function getBaseUrl(): Promise<string> {
-  const headerList = await headers();
-  const host = headerList.get("host") ?? "localhost:3000";
-  const protocol = host.startsWith("localhost") ? "http" : "https";
-  return `${protocol}://${host}`;
-}
-
-export async function requestLoginLink(formData: FormData): Promise<void> {
+export async function loginClient(formData: FormData): Promise<void> {
   const email = String(formData.get("email") ?? "")
     .trim()
     .toLowerCase();
+  const password = String(formData.get("password") ?? "");
 
-  if (!email || !email.includes("@")) {
-    throw new Error("Por favor indica un email válido.");
+  const client = email ? await prisma.client.findUnique({ where: { email } }) : null;
+  const passwordValid = client ? await verifyPassword(password, client.passwordHash) : false;
+
+  if (!client || !passwordValid) {
+    redirect("/cuenta/login?error=1");
   }
 
-  const existingClient = await prisma.client.findUnique({ where: { email } });
-  const client = existingClient ?? (await prisma.client.create({ data: { email } }));
-  const isNewClient = !existingClient;
-
-  const token = randomBytes(32).toString("hex");
-  await prisma.loginToken.create({
-    data: {
-      clientId: client.id,
-      token,
-      expiresAt: new Date(Date.now() + TOKEN_TTL_MINUTES * 60_000),
-    },
+  const cookieStore = await cookies();
+  cookieStore.set(CLIENT_COOKIE_NAME, createClientSessionCookieValue(client.id), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30, // 30 días
   });
 
-  const baseUrl = await getBaseUrl();
-  const loginUrl = `${baseUrl}/cuenta/verificar?token=${token}`;
-
-  await sendLoginEmail({ to: email, loginUrl, isNewClient });
-
-  redirect(`/cuenta/login?enviado=1`);
+  redirect("/cuenta");
 }

@@ -139,29 +139,14 @@ model Booking {
   createdAt   DateTime      @default(now())
 }
 
-// Espace client : connexion par lien magique envoyé par email, pas de mot
-// de passe à gérer. Un compte est créé automatiquement à la première
-// demande de connexion avec une nouvelle adresse.
+// Espace client : connexion classique par email + mot de passe. Le mot de
+// passe n'est jamais stocké en clair (voir lib/password.ts, hachage scrypt).
 model Client {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  createdAt    DateTime @default(now())
 
-  loginTokens LoginToken[]
-  bookings    Booking[]
-}
-
-// Jeton à usage unique envoyé par email ; consommé dès la première
-// utilisation et expire après un court délai (voir lib/clientAuth.ts).
-model LoginToken {
-  id        String    @id @default(cuid())
-  clientId  String
-  client    Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  token     String    @unique
-  expiresAt DateTime
-  usedAt    DateTime?
-  createdAt DateTime  @default(now())
-
-  @@index([clientId])
+  bookings Booking[]
 }

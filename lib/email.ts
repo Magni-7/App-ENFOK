@@ -14,33 +14,19 @@ function getResend(): Resend {
   return new Resend(apiKey);
 }
 
-type SendLoginEmailParams = {
+type SendWelcomeEmailParams = {
   to: string;
-  loginUrl: string;
-  isNewClient: boolean;
 };
 
-export async function sendLoginEmail({ to, loginUrl, isNewClient }: SendLoginEmailParams): Promise<void> {
+export async function sendWelcomeEmail({ to }: SendWelcomeEmailParams): Promise<void> {
   const resend = getResend();
-
-  const subject = isNewClient ? "¡Bienvenida a Trenzame!" : "Tu enlace de acceso a Trenzame";
-
-  const intro = isNewClient
-    ? `<p>¡Bienvenida a Trenzame! Tu cuenta acaba de crearse.</p>
-       <p>Desde aquí podrás ver tus próximas citas y tu historial de reservas.</p>`
-    : `<p>Aquí tienes tu enlace para acceder a tu cuenta Trenzame.</p>`;
 
   const html = `
     <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
-      ${intro}
-      <p style="margin: 24px 0;">
-        <a href="${loginUrl}" style="background:#8a3324;color:#fff;padding:12px 24px;text-decoration:none;border-radius:4px;display:inline-block;">
-          Acceder a mi cuenta
-        </a>
-      </p>
-      <p style="color:#6b6459;font-size:13px;">Este enlace caduca en 15 minutos y solo puede usarse una vez. Si no has solicitado esto, puedes ignorar este email.</p>
+      <p>¡Bienvenida a Trenzame! Tu cuenta acaba de crearse.</p>
+      <p>Desde aquí podrás ver tus próximas citas y tu historial de reservas.</p>
     </div>
   `;
 
-  await resend.emails.send({ from: FROM_EMAIL, to, subject, html });
+  await resend.emails.send({ from: FROM_EMAIL, to, subject: "¡Bienvenida a Trenzame!", html });
 }
