@@ -1,15 +1,23 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
 import CategoryChips from "@/components/CategoryChips";
 import SearchBar from "@/components/SearchBar";
+import SortSelect from "@/components/SortSelect";
 import StyleCard from "@/components/StyleCard";
 
 type CataloguePageProps = {
-  searchParams: Promise<{ categorie?: string; q?: string }>;
+  searchParams: Promise<{ categorie?: string; q?: string; sort?: string }>;
+};
+
+const SORT_OPTIONS: Record<string, Prisma.StyleOrderByWithRelationInput[]> = {
+  precio_asc: [{ basePriceCents: "asc" }],
+  precio_desc: [{ basePriceCents: "desc" }],
+  duracion_asc: [{ durationMinutes: "asc" }],
 };
 
 export default async function CataloguePage({ searchParams }: CataloguePageProps) {
-  const { categorie, q } = await searchParams;
+  const { categorie, q, sort } = await searchParams;
   const professional = await getDefaultProfessional();
   const categories = await prisma.category.findMany({
     where: { professionalId: professional.id },
@@ -20,6 +28,8 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
     ? categories.find((c) => c.slug === categorie)
     : undefined;
 
+  const orderBy = (sort && SORT_OPTIONS[sort]) || [{ categoryId: "asc" }, { order: "asc" }];
+
   const styles = await prisma.style.findMany({
     where: {
       professionalId: professional.id,
@@ -28,7 +38,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
       ...(q ? { name: { contains: q, mode: "insensitive" } } : {}),
     },
     include: { photos: { orderBy: { order: "asc" }, take: 1 } },
-    orderBy: [{ categoryId: "asc" }, { order: "asc" }],
+    orderBy,
   });
 
   return (
@@ -50,6 +60,10 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
         categories={categories.map((c) => ({ slug: c.slug, name: c.name }))}
         activeSlug={activeCategory?.slug}
       />
+
+      <div className="flex justify-end">
+        <SortSelect />
+      </div>
 
       {styles.length === 0 ? (
         <p className="text-sm text-ink/60">
