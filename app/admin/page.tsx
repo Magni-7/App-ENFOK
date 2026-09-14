@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
 import { COOKIE_NAME, isValidSessionCookieValue } from "@/lib/adminSession";
@@ -45,11 +46,16 @@ export default async function AdminPage() {
     <div className="flex flex-col gap-10">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">Agenda — {professional.displayName}</h1>
-        <form action={logout}>
-          <button type="submit" className="text-sm text-ink/60 underline underline-offset-4 hover:text-ink">
-            Cerrar sesión
-          </button>
-        </form>
+        <div className="flex items-center gap-4">
+          <Link href="/admin/galeria" className="text-sm underline underline-offset-4 hover:text-ink">
+            Gestionar galería
+          </Link>
+          <form action={logout}>
+            <button type="submit" className="text-sm text-ink/60 underline underline-offset-4 hover:text-ink">
+              Cerrar sesión
+            </button>
+          </form>
+        </div>
       </div>
 
       <section>

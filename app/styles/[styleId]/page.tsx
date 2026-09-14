@@ -39,6 +39,9 @@ export default async function StylePage({ params }: StylePageProps) {
       <div>
         <p className="font-mono text-xs uppercase tracking-widest text-clay">{style.category.name}</p>
         <h1 className="mt-1 font-serif text-2xl font-semibold tracking-tight">{style.name}</h1>
+        <Link href="/" className="mt-2 inline-block text-sm text-ink/60 underline underline-offset-4 hover:text-ink">
+          Hecho por {style.professional.displayName}
+        </Link>
         {style.description && <p className="mt-3 text-ink/80">{style.description}</p>}
       </div>
 
