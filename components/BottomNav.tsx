@@ -47,7 +47,7 @@ export default function BottomNav() {
     { href: "/cuenta/citas", label: "Citas", icon: ICONS.calendar, active: pathname.startsWith("/cuenta/citas") },
     {
       href: "/cuenta",
-      label: "Perfil",
+      label: "Cuenta",
       icon: ICONS.user,
       active: pathname === "/cuenta" || pathname.startsWith("/cuenta/login"),
     },

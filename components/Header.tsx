@@ -19,7 +19,10 @@ export default function Header() {
             Mis citas
           </Link>
           <Link href="/cuenta" className="hover:opacity-60">
-            Perfil
+            Cuenta
+          </Link>
+          <Link href="/admin" className="hover:opacity-60">
+            Pro
           </Link>
         </nav>
       </div>
