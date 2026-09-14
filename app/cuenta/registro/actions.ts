@@ -15,6 +15,10 @@ export async function registerClient(formData: FormData): Promise<void> {
   const password = String(formData.get("password") ?? "");
   const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
 
+  if (!name) {
+    redirect("/cuenta/registro?error=name_required");
+  }
+
   if (!email || !email.includes("@")) {
     redirect("/cuenta/registro?error=invalid_email");
   }
@@ -34,7 +38,7 @@ export async function registerClient(formData: FormData): Promise<void> {
 
   const passwordHash = await hashPassword(password);
   const client = await prisma.client.create({
-    data: { email, name: name || null, passwordHash },
+    data: { email, name, passwordHash },
   });
 
   await sendWelcomeEmail({ to: email }).catch(() => {

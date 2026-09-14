@@ -15,6 +15,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   password_mismatch: "Las contraseñas no coinciden.",
   password_short: "La contraseña debe tener al menos 8 caracteres.",
   invalid_email: "Por favor indica un email válido.",
+  name_required: "Por favor indica tu nombre.",
 };
 
 export default async function RegistroPage({ searchParams }: RegistroPageProps) {
@@ -37,10 +38,11 @@ export default async function RegistroPage({ searchParams }: RegistroPageProps) 
 
       <form action={registerClient} className="flex flex-col gap-4">
         <label className="flex flex-col gap-1 text-sm">
-          Nombre (opcional)
+          Nombre
           <input
             type="text"
             name="name"
+            required
             className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
           />
         </label>
