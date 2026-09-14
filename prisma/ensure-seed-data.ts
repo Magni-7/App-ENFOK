@@ -15,9 +15,11 @@ async function main() {
 
   // Personne n'a encore laissé d'avis : remet la note à 0 plutôt que le
   // placeholder précédent (5), qui donnait une fausse impression.
-  if (professional.rating !== 0) {
-    await prisma.professional.update({ where: { id: professional.id }, data: { rating: 0 } });
-  }
+  // Met aussi à jour le vrai numéro de téléphone (WhatsApp) d'Eva.
+  await prisma.professional.update({
+    where: { id: professional.id },
+    data: { rating: 0, whatsappNumber: "34633779158" },
+  });
 
   await prisma.salon.upsert({
     where: {

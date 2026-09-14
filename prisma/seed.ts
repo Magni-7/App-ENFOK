@@ -25,8 +25,7 @@ async function main() {
       bio: "Trenzas a medida en Barcelona.",
       instagramHandle: "braidingeva",
       instagramDmUsername: "braidingeva",
-      // Placeholder : à remplacer par le vrai numéro WhatsApp d'Eva (format international, ex. 34600000000)
-      whatsappNumber: "34600000000",
+      whatsappNumber: "34633779158",
       // Horaires de base d'Eva : 9h-20h (les futures braideuses choisiront
       // les leurs elles-mêmes, le défaut du schéma est 24h/24 en attendant).
       workDayStartMinutes: 9 * 60,
