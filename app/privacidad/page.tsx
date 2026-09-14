@@ -20,11 +20,10 @@ export default function PrivacidadPage() {
         <section className="flex flex-col gap-2">
           <h2 className="font-medium text-ink">1. Responsable del tratamiento</h2>
           <p>
-            Trenzame <br />
-            <span className="text-ink/60">
-              [Pendiente de completar con la identificación fiscal y datos de
-              contacto del responsable una vez esté constituida la actividad.]
-            </span>
+            Andy Garcia Falcón (Trenzame) <br />
+            NIF: Y8087796K <br />
+            Domicilio: Carrer Torrefigueras 9, 08830 Sant Boi de Llobregat, Barcelona <br />
+            Correo electrónico de contacto: havaneandy@gmail.com
           </p>
         </section>
 

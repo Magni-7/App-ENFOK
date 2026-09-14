@@ -20,14 +20,10 @@ export default function AvisoLegalPage() {
         <section className="flex flex-col gap-2">
           <h2 className="font-medium text-ink">1. Datos identificativos</h2>
           <p>
-            Titular: Trenzame <br />
-            Contacto: a través del botón de WhatsApp / Instagram disponible en la
-            plataforma. <br />
-            <span className="text-ink/60">
-              [Pendiente de completar con la denominación social o nombre y apellidos,
-              NIF/CIF, domicilio y correo electrónico de contacto una vez esté
-              constituida la actividad.]
-            </span>
+            Titular: Andy Garcia Falcón (Trenzame) <br />
+            NIF: Y8087796K <br />
+            Domicilio: Carrer Torrefigueras 9, 08830 Sant Boi de Llobregat, Barcelona <br />
+            Correo electrónico de contacto: havaneandy@gmail.com
           </p>
         </section>
 
