@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { getDefaultProfessional } from "@/lib/professional";
-import { COOKIE_NAME, isValidSessionCookieValue } from "@/lib/adminSession";
+import { requireProfessional } from "@/lib/professional";
 import { updateAccountDetails, updateAccountPassword } from "../actions";
 
 export const metadata: Metadata = {
@@ -24,13 +21,7 @@ const ERROR_MESSAGES: Record<string, string> = {
 };
 
 export default async function AdminDetallesPage({ searchParams }: DetallesPageProps) {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get(COOKIE_NAME)?.value;
-  if (!isValidSessionCookieValue(sessionCookie)) {
-    redirect("/admin/login");
-  }
-
-  const professional = await getDefaultProfessional();
+  const professional = await requireProfessional();
   const { error, actualizado } = await searchParams;
 
   return (

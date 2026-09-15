@@ -1,23 +1,14 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { getDefaultProfessional } from "@/lib/professional";
-import { COOKIE_NAME, isValidSessionCookieValue } from "@/lib/adminSession";
+import { requireProfessional } from "@/lib/professional";
 import { formatDuration, formatPriceFrom } from "@/lib/format";
 import { createCategory, createGalleryItem, deleteGalleryItem, toggleGalleryItemActive } from "./actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminGaleriaPage() {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get(COOKIE_NAME)?.value;
-  if (!isValidSessionCookieValue(sessionCookie)) {
-    redirect("/admin/login");
-  }
-
-  const professional = await getDefaultProfessional();
+  const professional = await requireProfessional();
 
   const [categories, styles] = await Promise.all([
     prisma.category.findMany({

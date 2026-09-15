@@ -31,6 +31,28 @@ export async function sendWelcomeEmail({ to }: SendWelcomeEmailParams): Promise<
   await resend.emails.send({ from: FROM_EMAIL, to, subject: "¡Bienvenida a Trenzame!", html });
 }
 
+type SendProfessionalWelcomeEmailParams = {
+  to: string;
+  displayName: string;
+};
+
+export async function sendProfessionalWelcomeEmail({
+  to,
+  displayName,
+}: SendProfessionalWelcomeEmailParams): Promise<void> {
+  const resend = getResend();
+
+  const html = `
+    <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+      <p>¡Bienvenida a Trenzame, ${displayName}!</p>
+      <p>Tu cuenta profesional acaba de crearse. Desde tu panel de administración podrás
+      añadir tu salón, publicar tu galería de trabajos y gestionar tus citas.</p>
+    </div>
+  `;
+
+  await resend.emails.send({ from: FROM_EMAIL, to, subject: "¡Bienvenida a Trenzame!", html });
+}
+
 type SendReviewRequestEmailParams = {
   to: string;
   professionalDisplayName: string;

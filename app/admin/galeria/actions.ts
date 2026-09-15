@@ -1,25 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { put, del } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
-import { getDefaultProfessional } from "@/lib/professional";
-import { COOKIE_NAME, isValidSessionCookieValue } from "@/lib/adminSession";
+import { requireProfessional } from "@/lib/professional";
+import { slugify } from "@/lib/slug";
 import { resizeImage } from "@/lib/image";
 
 // Largeur max des photos de galerie : assez grande pour un carrousel plein
 // écran, sans garder les fichiers bruts de plusieurs Mo pris au téléphone.
 const GALLERY_PHOTO_MAX_WIDTH = 1600;
-
-async function requireAdminSession(): Promise<void> {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get(COOKIE_NAME)?.value;
-  if (!isValidSessionCookieValue(sessionCookie)) {
-    redirect("/admin/login");
-  }
-}
 
 function parsePriceEuros(value: string): number | null {
   const normalized = value.replace(",", ".");
@@ -37,19 +28,8 @@ function parseDurationMinutes(hours: string, minutes: string): number | null {
   return total;
 }
 
-function slugify(value: string): string {
-  return value
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
 export async function createGalleryItem(formData: FormData): Promise<void> {
-  await requireAdminSession();
-
-  const professional = await getDefaultProfessional();
+  const professional = await requireProfessional();
 
   const name = String(formData.get("name") ?? "").trim();
   const categoryId = String(formData.get("categoryId") ?? "");
@@ -110,10 +90,9 @@ export async function createGalleryItem(formData: FormData): Promise<void> {
 }
 
 export async function toggleGalleryItemActive(formData: FormData): Promise<void> {
-  await requireAdminSession();
+  const professional = await requireProfessional();
 
   const styleId = String(formData.get("styleId") ?? "");
-  const professional = await getDefaultProfessional();
 
   const style = await prisma.style.findFirst({
     where: { id: styleId, professionalId: professional.id },
@@ -131,9 +110,7 @@ export async function toggleGalleryItemActive(formData: FormData): Promise<void>
 }
 
 export async function createCategory(formData: FormData): Promise<void> {
-  await requireAdminSession();
-
-  const professional = await getDefaultProfessional();
+  const professional = await requireProfessional();
   const name = String(formData.get("name") ?? "").trim();
   if (!name) {
     throw new Error("Indica un nombre de categoría.");
@@ -162,10 +139,9 @@ export async function createCategory(formData: FormData): Promise<void> {
 }
 
 export async function deleteGalleryItem(formData: FormData): Promise<void> {
-  await requireAdminSession();
+  const professional = await requireProfessional();
 
   const styleId = String(formData.get("styleId") ?? "");
-  const professional = await getDefaultProfessional();
 
   const style = await prisma.style.findFirst({
     where: { id: styleId, professionalId: professional.id },

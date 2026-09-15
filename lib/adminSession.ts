@@ -1,7 +1,6 @@
 import { createHmac, timingSafeEqual } from "crypto";
 
 const COOKIE_NAME = "eva_admin_session";
-const SESSION_VALUE = "ok";
 
 function getSecret(): string {
   const secret = process.env.ADMIN_SESSION_SECRET;
@@ -15,24 +14,29 @@ function sign(value: string): string {
   return createHmac("sha256", getSecret()).update(value).digest("hex");
 }
 
-export function createSessionCookieValue(): string {
-  const signature = sign(SESSION_VALUE);
-  return `${SESSION_VALUE}.${signature}`;
+// Le cookie encode l'id du professionnel connecté (comme lib/clientSession.ts
+// pour les clientes) : chaque professionnel n'accède qu'à ses propres
+// données, au lieu de toujours retomber sur le professionnel par défaut.
+export function createSessionCookieValue(professionalId: string): string {
+  return `${professionalId}.${sign(professionalId)}`;
 }
 
-const HEX_SIGNATURE_RE = /^[0-9a-f]{64}$/;
+export function getProfessionalIdFromSession(cookieValue: string | undefined): string | null {
+  if (!cookieValue) return null;
+  const separatorIndex = cookieValue.lastIndexOf(".");
+  if (separatorIndex === -1) return null;
 
-export function isValidSessionCookieValue(cookieValue: string | undefined): boolean {
-  if (!cookieValue) return false;
-  const [value, signature] = cookieValue.split(".");
-  if (!value || !signature) return false;
-  if (value !== SESSION_VALUE) return false;
-  if (!HEX_SIGNATURE_RE.test(signature)) return false;
+  const professionalId = cookieValue.slice(0, separatorIndex);
+  const signature = cookieValue.slice(separatorIndex + 1);
+  if (!professionalId || !/^[0-9a-f]{64}$/.test(signature)) return null;
 
-  const expectedBuf = Buffer.from(sign(value), "hex");
+  const expectedBuf = Buffer.from(sign(professionalId), "hex");
   const actualBuf = Buffer.from(signature, "hex");
+  if (expectedBuf.length !== actualBuf.length || !timingSafeEqual(expectedBuf, actualBuf)) {
+    return null;
+  }
 
-  return timingSafeEqual(expectedBuf, actualBuf);
+  return professionalId;
 }
 
 export { COOKIE_NAME };

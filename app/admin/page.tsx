@@ -1,12 +1,9 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
-import { getDefaultProfessional } from "@/lib/professional";
-import { COOKIE_NAME, isValidSessionCookieValue } from "@/lib/adminSession";
+import { requireProfessional } from "@/lib/professional";
 import { formatSlotDate, formatSlotTime } from "@/lib/format";
-import { updateSchedule, updateSalonPhoto, logout } from "./actions";
+import { updateSchedule, updateSalonPhoto, createSalon, logout } from "./actions";
 
 function minutesToTimeInput(minutes: number): string {
   const h = Math.floor(minutes / 60) % 24;
@@ -25,13 +22,7 @@ const WEEKDAYS = [
 ];
 
 export default async function AdminPage() {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get(COOKIE_NAME)?.value;
-  if (!isValidSessionCookieValue(sessionCookie)) {
-    redirect("/admin/login");
-  }
-
-  const professional = await getDefaultProfessional();
+  const professional = await requireProfessional();
 
   const salons = await prisma.salon.findMany({
     where: { professionalId: professional.id },
@@ -110,6 +101,52 @@ export default async function AdminPage() {
               </div>
             ))}
           </div>
+        </section>
+      )}
+
+      {salons.length === 0 && (
+        <section className="border-t border-line pt-8">
+          <h2 className="mb-1 text-sm uppercase tracking-widest text-ink/60">Tu salón</h2>
+          <p className="mb-4 text-sm text-ink/60">
+            Todavía no has añadido ningún salón. Añade el lugar donde recibes a tus clientas para
+            que aparezca en tu página pública.
+          </p>
+          <form action={createSalon} encType="multipart/form-data" className="flex flex-col gap-4 sm:max-w-sm">
+            <label className="flex flex-col gap-1 text-sm">
+              Nombre del salón
+              <input
+                type="text"
+                name="name"
+                required
+                placeholder="Ej. Trenzame Studio"
+                className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              Dirección (opcional)
+              <input
+                type="text"
+                name="address"
+                className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              Foto
+              <input
+                type="file"
+                name="photo"
+                accept="image/*"
+                required
+                className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
+              />
+            </label>
+            <button
+              type="submit"
+              className="self-start border border-ink bg-ink px-6 py-2 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-paper hover:text-ink"
+            >
+              Crear salón
+            </button>
+          </form>
         </section>
       )}
 
