@@ -5,20 +5,12 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { put } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
-import { getDefaultProfessional } from "@/lib/professional";
-import { COOKIE_NAME, createSessionCookieValue, isValidSessionCookieValue } from "@/lib/adminSession";
+import { requireProfessional } from "@/lib/professional";
+import { COOKIE_NAME, createSessionCookieValue } from "@/lib/adminSession";
 import { resizeImage } from "@/lib/image";
 import { hashPassword, verifyPassword } from "@/lib/password";
 
 const SALON_PHOTO_MAX_WIDTH = 1600;
-
-async function requireAdminSession(): Promise<void> {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get(COOKIE_NAME)?.value;
-  if (!isValidSessionCookieValue(sessionCookie)) {
-    redirect("/admin/login");
-  }
-}
 
 export async function login(formData: FormData): Promise<void> {
   const email = String(formData.get("email") ?? "")
@@ -36,7 +28,7 @@ export async function login(formData: FormData): Promise<void> {
   }
 
   const cookieStore = await cookies();
-  cookieStore.set(COOKIE_NAME, createSessionCookieValue(), {
+  cookieStore.set(COOKIE_NAME, createSessionCookieValue(professional.id), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -80,7 +72,7 @@ export async function updateSchedule(formData: FormData): Promise<void> {
     throw new Error("Por favor indica una hora de inicio y una hora de fin válidas (fin después de inicio).");
   }
 
-  const professional = await getDefaultProfessional();
+  const professional = await requireProfessional();
 
   await prisma.professional.update({
     where: { id: professional.id },
@@ -91,7 +83,7 @@ export async function updateSchedule(formData: FormData): Promise<void> {
 }
 
 export async function updateSalonPhoto(formData: FormData): Promise<void> {
-  await requireAdminSession();
+  const professional = await requireProfessional();
 
   const salonId = String(formData.get("salonId") ?? "");
   const photo = formData.get("photo");
@@ -100,7 +92,6 @@ export async function updateSalonPhoto(formData: FormData): Promise<void> {
     throw new Error("Por favor selecciona una foto.");
   }
 
-  const professional = await getDefaultProfessional();
   const salon = await prisma.salon.findFirst({
     where: { id: salonId, professionalId: professional.id },
   });
@@ -123,10 +114,53 @@ export async function updateSalonPhoto(formData: FormData): Promise<void> {
   redirect("/admin");
 }
 
-export async function updateAccountDetails(formData: FormData): Promise<void> {
-  await requireAdminSession();
+// Un professionnel qui vient de s'inscrire (voir /admin/registro) n'a encore
+// aucun salon : cette action lui permet d'en créer un premier (nom, adresse,
+// photo). Les salons suivants restent à ajouter plus tard si besoin.
+export async function createSalon(formData: FormData): Promise<void> {
+  const professional = await requireProfessional();
 
-  const professional = await getDefaultProfessional();
+  const name = String(formData.get("name") ?? "").trim();
+  const address = String(formData.get("address") ?? "").trim();
+  const photo = formData.get("photo");
+
+  if (!name) {
+    throw new Error("Por favor indica un nombre para el salón.");
+  }
+  if (!(photo instanceof File) || photo.size === 0) {
+    throw new Error("Por favor selecciona una foto.");
+  }
+
+  const maxOrder = await prisma.salon.aggregate({
+    where: { professionalId: professional.id },
+    _max: { order: true },
+  });
+
+  const { buffer, contentType } = await resizeImage(photo, SALON_PHOTO_MAX_WIDTH);
+  const blob = await put(`salones/${professional.id}-${Date.now()}.jpg`, buffer, {
+    access: "public",
+    addRandomSuffix: true,
+    contentType,
+  });
+
+  await prisma.salon.create({
+    data: {
+      professionalId: professional.id,
+      name,
+      address: address || null,
+      photoUrl: blob.url,
+      order: (maxOrder._max.order ?? 0) + 1,
+    },
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/");
+  revalidatePath(`/profesionales/${professional.slug}`);
+  redirect("/admin");
+}
+
+export async function updateAccountDetails(formData: FormData): Promise<void> {
+  const professional = await requireProfessional();
 
   const displayName = String(formData.get("displayName") ?? "").trim();
   const email = String(formData.get("email") ?? "")
@@ -158,9 +192,7 @@ export async function updateAccountDetails(formData: FormData): Promise<void> {
 }
 
 export async function updateAccountPassword(formData: FormData): Promise<void> {
-  await requireAdminSession();
-
-  const professional = await getDefaultProfessional();
+  const professional = await requireProfessional();
 
   const currentPassword = String(formData.get("currentPassword") ?? "");
   const newPassword = String(formData.get("newPassword") ?? "");

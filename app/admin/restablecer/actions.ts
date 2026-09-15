@@ -33,7 +33,7 @@ export async function resetProfessionalPassword(formData: FormData): Promise<voi
   ]);
 
   const cookieStore = await cookies();
-  cookieStore.set(COOKIE_NAME, createSessionCookieValue(), {
+  cookieStore.set(COOKIE_NAME, createSessionCookieValue(resetToken.professionalId), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

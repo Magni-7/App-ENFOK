@@ -49,6 +49,13 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
           ¿Olvidaste tu contraseña?
         </Link>
       </p>
+
+      <p className="text-center text-sm text-ink/70">
+        ¿Eres profesional y no tienes cuenta?{" "}
+        <Link href="/admin/registro" className="underline underline-offset-4 hover:text-ink">
+          Crea tu cuenta
+        </Link>
+      </p>
     </div>
   );
 }
