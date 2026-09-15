@@ -2,9 +2,22 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { put } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
-import { COOKIE_NAME, createSessionCookieValue } from "@/lib/adminSession";
+import { COOKIE_NAME, createSessionCookieValue, isValidSessionCookieValue } from "@/lib/adminSession";
+import { resizeImage } from "@/lib/image";
+
+const SALON_PHOTO_MAX_WIDTH = 1600;
+
+async function requireAdminSession(): Promise<void> {
+  const cookieStore = await cookies();
+  const sessionCookie = cookieStore.get(COOKIE_NAME)?.value;
+  if (!isValidSessionCookieValue(sessionCookie)) {
+    redirect("/admin/login");
+  }
+}
 
 export async function login(formData: FormData): Promise<void> {
   const password = String(formData.get("password") ?? "");
@@ -66,5 +79,38 @@ export async function updateSchedule(formData: FormData): Promise<void> {
     data: { daysOff, workDayStartMinutes, workDayEndMinutes },
   });
 
+  redirect("/admin");
+}
+
+export async function updateSalonPhoto(formData: FormData): Promise<void> {
+  await requireAdminSession();
+
+  const salonId = String(formData.get("salonId") ?? "");
+  const photo = formData.get("photo");
+
+  if (!(photo instanceof File) || photo.size === 0) {
+    throw new Error("Por favor selecciona una foto.");
+  }
+
+  const professional = await getDefaultProfessional();
+  const salon = await prisma.salon.findFirst({
+    where: { id: salonId, professionalId: professional.id },
+  });
+  if (!salon) {
+    throw new Error("Salón no encontrado.");
+  }
+
+  const { buffer, contentType } = await resizeImage(photo, SALON_PHOTO_MAX_WIDTH);
+  const blob = await put(`salones/${salon.id}-${Date.now()}.jpg`, buffer, {
+    access: "public",
+    addRandomSuffix: true,
+    contentType,
+  });
+
+  await prisma.salon.update({ where: { id: salon.id }, data: { photoUrl: blob.url } });
+
+  revalidatePath("/admin");
+  revalidatePath("/");
+  revalidatePath(`/profesionales/${professional.slug}`);
   redirect("/admin");
 }

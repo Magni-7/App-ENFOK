@@ -1,11 +1,12 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
 import { COOKIE_NAME, isValidSessionCookieValue } from "@/lib/adminSession";
 import { formatSlotDate, formatSlotTime } from "@/lib/format";
-import { updateSchedule, logout } from "./actions";
+import { updateSchedule, updateSalonPhoto, logout } from "./actions";
 
 function minutesToTimeInput(minutes: number): string {
   const h = Math.floor(minutes / 60) % 24;
@@ -31,6 +32,11 @@ export default async function AdminPage() {
   }
 
   const professional = await getDefaultProfessional();
+
+  const salons = await prisma.salon.findMany({
+    where: { professionalId: professional.id },
+    orderBy: { order: "asc" },
+  });
 
   const bookings = await prisma.booking.findMany({
     where: {
@@ -58,7 +64,53 @@ export default async function AdminPage() {
         </div>
       </div>
 
-      <section>
+      {salons.length > 0 && (
+        <section className="border-t border-line pt-8">
+          <h2 className="mb-4 text-sm uppercase tracking-widest text-ink/60">Tu salón</h2>
+          <div className="flex flex-col gap-6 sm:flex-row sm:flex-wrap">
+            {salons.map((salon) => (
+              <div key={salon.id} className="flex flex-col gap-3 sm:w-72">
+                <div className="relative aspect-[16/9] w-full overflow-hidden border border-line bg-ink">
+                  <Image src={salon.photoUrl} alt={salon.name} fill className="object-cover" sizes="288px" />
+                </div>
+                <div>
+                  <p className="font-medium">{salon.name}</p>
+                  {salon.address && <p className="text-sm text-ink/60">{salon.address}</p>}
+                </div>
+                <form
+                  action={updateSalonPhoto}
+                  encType="multipart/form-data"
+                  className="flex items-center gap-3 text-sm"
+                >
+                  <input type="hidden" name="salonId" value={salon.id} />
+                  <label
+                    htmlFor={`salon-photo-${salon.id}`}
+                    className="cursor-pointer underline underline-offset-4 hover:text-ink"
+                  >
+                    Elegir foto
+                  </label>
+                  <input
+                    id={`salon-photo-${salon.id}`}
+                    type="file"
+                    name="photo"
+                    accept="image/*"
+                    required
+                    className="hidden"
+                  />
+                  <button
+                    type="submit"
+                    className="border border-line px-3 py-1.5 text-xs uppercase tracking-wide hover:border-ink"
+                  >
+                    Guardar foto
+                  </button>
+                </form>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="border-t border-line pt-8">
         <h2 className="mb-4 text-sm uppercase tracking-widest text-ink/60">
           Próximas citas ({bookings.length})
         </h2>
