@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
-import ContactButton from "@/components/ContactButton";
 import SalonCard from "@/components/SalonCard";
 import StyleThumb from "@/components/StyleThumb";
 
@@ -87,19 +86,6 @@ export default async function HomePage() {
           ))}
         </section>
       )}
-
-      <section className="flex flex-col items-center gap-3 border-t border-line pt-10 text-center">
-        <p className="max-w-sm text-sm text-ink/70">
-          ¿Tienes una idea concreta de un estilo fuera de catálogo?
-        </p>
-        <div className="flex justify-center">
-          <ContactButton
-            whatsappNumber={professional.whatsappNumber}
-            instagramUsername={professional.instagramDmUsername}
-            message={`¡Hola ${professional.displayName}! Me gustaría hablar sobre un estilo de trenzas personalizado, fuera de catálogo.`}
-          />
-        </div>
-      </section>
     </div>
   );
 }
