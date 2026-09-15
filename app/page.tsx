@@ -46,6 +46,12 @@ export default async function HomePage() {
         <p className="mx-auto mt-3 max-w-md text-ink/70">
           Reserva tu cita de trenzas con profesionales verificadas en Barcelona.
         </p>
+        <Link
+          href="/catalogue"
+          className="mt-6 inline-block border border-ink bg-ink px-8 py-3 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-paper hover:text-ink"
+        >
+          Reservar una trenza
+        </Link>
       </section>
 
       {professionalsWithSalon.length > 0 && (

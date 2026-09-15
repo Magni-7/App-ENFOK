@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import CategoryChips from "@/components/CategoryChips";
+import ContactButton from "@/components/ContactButton";
 import SalonChips from "@/components/SalonChips";
 import SearchBar from "@/components/SearchBar";
 import SortSelect from "@/components/SortSelect";
@@ -83,9 +84,22 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
       </div>
 
       {styles.length === 0 ? (
-        <p className="text-sm text-ink/60">
-          {q ? `Ningún estilo coincide con "${q}".` : "No hay estilos disponibles con estos filtros por ahora."}
-        </p>
+        <div className="flex flex-col items-start gap-4">
+          <p className="text-sm text-ink/60">
+            {q
+              ? `Ningún estilo coincide con "${q}".`
+              : professional
+                ? `${professional.displayName} todavía no ha publicado precios y duraciones. Mientras tanto, pregunta directamente:`
+                : "No hay estilos disponibles con estos filtros por ahora."}
+          </p>
+          {professional && !q && (
+            <ContactButton
+              whatsappNumber={professional.whatsappNumber}
+              instagramUsername={professional.instagramDmUsername}
+              message={`¡Hola ${professional.displayName}! Me interesa reservar una cita, ¿me puedes dar precio y disponibilidad?`}
+            />
+          )}
+        </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {styles.map((style) => (
