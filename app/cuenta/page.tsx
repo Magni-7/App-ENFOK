@@ -31,7 +31,7 @@ export default async function PerfilPage() {
         </div>
         <div>
           <h1 className="font-serif text-xl font-semibold tracking-tight">{client.name ?? client.email}</h1>
-          <p className="mt-1 text-sm text-ink/60">{client.phone ?? client.email}</p>
+          {client.phone && <p className="mt-1 text-sm text-ink/60">{client.phone}</p>}
         </div>
       </div>
 
