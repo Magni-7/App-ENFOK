@@ -7,6 +7,11 @@ import { put, del } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
 import { COOKIE_NAME, isValidSessionCookieValue } from "@/lib/adminSession";
+import { resizeImage } from "@/lib/image";
+
+// Largeur max des photos de galerie : assez grande pour un carrousel plein
+// écran, sans garder les fichiers bruts de plusieurs Mo pris au téléphone.
+const GALLERY_PHOTO_MAX_WIDTH = 1600;
 
 async function requireAdminSession(): Promise<void> {
   const cookieStore = await cookies();
@@ -74,11 +79,12 @@ export async function createGalleryItem(formData: FormData): Promise<void> {
   }
 
   const blobs = await Promise.all(
-    photos.map((photo, index) => {
-      const extension = photo.name.split(".").pop() || "jpg";
-      return put(`galeria/${professional.id}-${Date.now()}-${index}.${extension}`, photo, {
+    photos.map(async (photo, index) => {
+      const { buffer, contentType } = await resizeImage(photo, GALLERY_PHOTO_MAX_WIDTH);
+      return put(`galeria/${professional.id}-${Date.now()}-${index}.jpg`, buffer, {
         access: "public",
         addRandomSuffix: true,
+        contentType,
       });
     })
   );

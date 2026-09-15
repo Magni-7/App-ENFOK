@@ -19,27 +19,28 @@ const SORT_OPTIONS: Record<string, Prisma.StyleOrderByWithRelationInput[]> = {
 export default async function CataloguePage({ searchParams }: CataloguePageProps) {
   const { categorie, q, sort } = await searchParams;
   const professional = await getDefaultProfessional();
-  const categories = await prisma.category.findMany({
-    where: { professionalId: professional.id },
-    orderBy: { order: "asc" },
-  });
+  const orderBy = (sort && SORT_OPTIONS[sort]) || [{ categoryId: "asc" }, { order: "asc" }];
+
+  const [categories, styles] = await Promise.all([
+    prisma.category.findMany({
+      where: { professionalId: professional.id },
+      orderBy: { order: "asc" },
+    }),
+    prisma.style.findMany({
+      where: {
+        professionalId: professional.id,
+        isActive: true,
+        ...(categorie ? { category: { slug: categorie } } : {}),
+        ...(q ? { name: { contains: q, mode: "insensitive" } } : {}),
+      },
+      include: { photos: { orderBy: { order: "asc" }, take: 1 } },
+      orderBy,
+    }),
+  ]);
 
   const activeCategory = categorie
     ? categories.find((c) => c.slug === categorie)
     : undefined;
-
-  const orderBy = (sort && SORT_OPTIONS[sort]) || [{ categoryId: "asc" }, { order: "asc" }];
-
-  const styles = await prisma.style.findMany({
-    where: {
-      professionalId: professional.id,
-      isActive: true,
-      ...(activeCategory ? { categoryId: activeCategory.id } : {}),
-      ...(q ? { name: { contains: q, mode: "insensitive" } } : {}),
-    },
-    include: { photos: { orderBy: { order: "asc" }, take: 1 } },
-    orderBy,
-  });
 
   return (
     <div className="flex flex-col gap-8">

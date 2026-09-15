@@ -7,6 +7,10 @@ import { put } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
 import { getCurrentClient } from "@/lib/clientAuth";
 import { CLIENT_COOKIE_NAME } from "@/lib/clientSession";
+import { resizeImage } from "@/lib/image";
+
+// Un avatar n'a jamais besoin d'être affiché plus grand que ça.
+const AVATAR_MAX_WIDTH = 400;
 
 export async function logoutClient(): Promise<void> {
   const cookieStore = await cookies();
@@ -25,10 +29,11 @@ export async function updateAvatar(formData: FormData): Promise<void> {
     throw new Error("Por favor selecciona una foto.");
   }
 
-  const extension = photo.name.split(".").pop() || "jpg";
-  const blob = await put(`avatares/${client.id}-${Date.now()}.${extension}`, photo, {
+  const { buffer, contentType } = await resizeImage(photo, AVATAR_MAX_WIDTH);
+  const blob = await put(`avatares/${client.id}-${Date.now()}.jpg`, buffer, {
     access: "public",
     addRandomSuffix: true,
+    contentType,
   });
 
   await prisma.client.update({ where: { id: client.id }, data: { avatarUrl: blob.url } });
