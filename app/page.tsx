@@ -1,34 +1,26 @@
-import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { getDefaultProfessional } from "@/lib/professional";
 import { getProfessionalRatingSummary } from "@/lib/reviews";
 import SalonCard from "@/components/SalonCard";
 import StyleThumb from "@/components/StyleThumb";
 
-// Les données (catégories, styles) changent en base y no deben quedar
+// Les données (professionnels, styles) changent en base y no deben quedar
 // fijadas al build: renderizado bajo demanda en lugar de estático.
 export const dynamic = "force-dynamic";
 
-// Repli tant qu'il n'y a pas encore de style réservable en base : montre
-// quelques photos déjà publiées dans la galería (voir /galeria/legado).
-const FALLBACK_LEGACY_COUNT = 12;
-const fallbackLegacyPhotos = Array.from({ length: FALLBACK_LEGACY_COUNT }, (_, i) => ({
-  index: i + 1,
-  src: `/images/gallery/eva/eva-${String(i + 1).padStart(2, "0")}.jpg`,
-}));
-
 export default async function HomePage() {
-  const professional = await getDefaultProfessional();
+  const professionals = await prisma.professional.findMany({
+    include: { salons: { orderBy: { order: "asc" }, take: 1 } },
+    orderBy: { createdAt: "asc" },
+  });
+  const professionalsWithSalon = professionals.filter((p) => p.salons.length > 0);
 
-  const [salons, ratingSummary, styles] = await Promise.all([
-    prisma.salon.findMany({
-      where: { professionalId: professional.id },
-      orderBy: { order: "asc" },
-    }),
-    getProfessionalRatingSummary(professional.id),
+  const [ratingSummaries, recentStyles] = await Promise.all([
+    Promise.all(
+      professionalsWithSalon.map((p) => getProfessionalRatingSummary(p.id))
+    ),
     prisma.style.findMany({
-      where: { professionalId: professional.id, isActive: true },
+      where: { isActive: true },
       orderBy: { createdAt: "desc" },
       take: 12,
       include: { photos: { orderBy: { order: "asc" }, take: 1 } },
@@ -47,26 +39,32 @@ export default async function HomePage() {
         </p>
       </section>
 
-      {salons.length > 0 && (
+      {professionalsWithSalon.length > 0 && (
         <section>
-          <h2 className="mb-4 font-mono text-xs uppercase tracking-widest text-ink/60">Nuestros salones</h2>
+          <h2 className="mb-4 font-mono text-xs uppercase tracking-widest text-ink/60">
+            Nuestros salones
+          </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {salons.map((salon) => (
-              <SalonCard
-                key={salon.id}
-                professionalSlug={professional.slug}
-                name={salon.name}
-                photoUrl={salon.photoUrl}
-                address={salon.address}
-                rating={ratingSummary.average}
-                reviewCount={ratingSummary.count}
-              />
-            ))}
+            {professionalsWithSalon.map((professional, index) => {
+              const salon = professional.salons[0]!;
+              const ratingSummary = ratingSummaries[index]!;
+              return (
+                <SalonCard
+                  key={professional.id}
+                  professionalSlug={professional.slug}
+                  name={salon.name}
+                  photoUrl={salon.photoUrl}
+                  address={salon.address}
+                  rating={ratingSummary.average}
+                  reviewCount={ratingSummary.count}
+                />
+              );
+            })}
           </div>
         </section>
       )}
 
-      {styles.length > 0 ? (
+      {recentStyles.length > 0 && (
         <section>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-mono text-xs uppercase tracking-widest text-ink/60">Modelos</h2>
@@ -75,7 +73,7 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
-            {styles.map((style) => {
+            {recentStyles.map((style) => {
               const photo = style.photos[0];
               if (!photo) return null;
               return (
@@ -88,30 +86,6 @@ export default async function HomePage() {
                 />
               );
             })}
-          </div>
-        </section>
-      ) : (
-        <section>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-mono text-xs uppercase tracking-widest text-ink/60">Modelos</h2>
-            <Link href="/galeria" className="text-sm underline underline-offset-4 hover:no-underline">
-              Ver todo
-            </Link>
-          </div>
-          <div className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
-            {fallbackLegacyPhotos.map((photo) => (
-              <Link key={photo.index} href={`/galeria/legado/${photo.index}`} className="group w-28 shrink-0 sm:w-32">
-                <div className="relative aspect-square w-full overflow-hidden rounded-xl border border-line bg-ink">
-                  <Image
-                    src={photo.src}
-                    alt="Trabajo de trenzas realizado por Eva"
-                    fill
-                    className="object-cover transition duration-300 group-hover:scale-105"
-                    sizes="128px"
-                  />
-                </div>
-              </Link>
-            ))}
           </div>
         </section>
       )}
