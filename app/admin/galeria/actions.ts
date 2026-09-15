@@ -32,6 +32,15 @@ function parseDurationMinutes(hours: string, minutes: string): number | null {
   return total;
 }
 
+function slugify(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export async function createGalleryItem(formData: FormData): Promise<void> {
   await requireAdminSession();
 
@@ -47,14 +56,14 @@ export async function createGalleryItem(formData: FormData): Promise<void> {
     String(formData.get("durationHours") ?? ""),
     String(formData.get("durationMinutes") ?? "")
   );
-  const photo = formData.get("photo");
+  const photos = formData.getAll("photos").filter((f): f is File => f instanceof File && f.size > 0);
 
   if (!name || !categoryId || !minHairLength || !priceCents || !durationMinutes) {
     throw new Error("Por favor completa todos los campos obligatorios con valores válidos.");
   }
 
-  if (!(photo instanceof File) || photo.size === 0) {
-    throw new Error("Por favor selecciona una foto.");
+  if (photos.length === 0) {
+    throw new Error("Por favor selecciona al menos una foto.");
   }
 
   const category = await prisma.category.findFirst({
@@ -64,11 +73,15 @@ export async function createGalleryItem(formData: FormData): Promise<void> {
     throw new Error("Categoría inválida.");
   }
 
-  const extension = photo.name.split(".").pop() || "jpg";
-  const blob = await put(`galeria/${professional.id}-${Date.now()}.${extension}`, photo, {
-    access: "public",
-    addRandomSuffix: true,
-  });
+  const blobs = await Promise.all(
+    photos.map((photo, index) => {
+      const extension = photo.name.split(".").pop() || "jpg";
+      return put(`galeria/${professional.id}-${Date.now()}-${index}.${extension}`, photo, {
+        access: "public",
+        addRandomSuffix: true,
+      });
+    })
+  );
 
   await prisma.style.create({
     data: {
@@ -80,7 +93,7 @@ export async function createGalleryItem(formData: FormData): Promise<void> {
       durationMinutes,
       minHairLength,
       hairProvidedBy: hairProvidedBy === "PROFESSIONAL" ? "PROFESSIONAL" : "CLIENT",
-      photos: { create: { url: blob.url, alt: name, order: 0 } },
+      photos: { create: blobs.map((blob, order) => ({ url: blob.url, alt: name, order })) },
     },
   });
 
@@ -108,6 +121,37 @@ export async function toggleGalleryItemActive(formData: FormData): Promise<void>
 
   revalidatePath("/admin/galeria");
   revalidatePath("/galeria");
+  revalidatePath("/catalogue");
+}
+
+export async function createCategory(formData: FormData): Promise<void> {
+  await requireAdminSession();
+
+  const professional = await getDefaultProfessional();
+  const name = String(formData.get("name") ?? "").trim();
+  if (!name) {
+    throw new Error("Indica un nombre de categoría.");
+  }
+
+  const baseSlug = slugify(name) || "categoria";
+  let slug = baseSlug;
+  let suffix = 1;
+  while (await prisma.category.findUnique({ where: { professionalId_slug: { professionalId: professional.id, slug } } })) {
+    suffix += 1;
+    slug = `${baseSlug}-${suffix}`;
+  }
+
+  const maxOrder = await prisma.category.aggregate({
+    where: { professionalId: professional.id },
+    _max: { order: true },
+  });
+
+  await prisma.category.create({
+    data: { professionalId: professional.id, name, slug, order: (maxOrder._max.order ?? 0) + 1 },
+  });
+
+  revalidatePath("/admin/galeria");
+  revalidatePath("/");
   revalidatePath("/catalogue");
 }
 

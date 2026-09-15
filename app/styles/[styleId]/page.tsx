@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { formatDuration, formatHairProvider, formatPriceFrom } from "@/lib/format";
 import ContactButton from "@/components/ContactButton";
+import PhotoGallery from "@/components/PhotoGallery";
 
 type StylePageProps = {
   params: Promise<{ styleId: string }>;
@@ -24,17 +24,16 @@ export default async function StylePage({ params }: StylePageProps) {
     notFound();
   }
 
-  const photoUrl = style.photos[0]?.url ?? "/images/placeholder-style.svg";
-
   return (
     <div className="flex flex-col gap-8">
       <Link href="/catalogue" className="text-sm text-ink/60 hover:text-ink">
         ← Volver al catálogo
       </Link>
 
-      <div className="relative aspect-[4/3] w-full overflow-hidden border border-line bg-ink">
-        <Image src={photoUrl} alt={style.name} fill className="object-cover" sizes="100vw" priority />
-      </div>
+      <PhotoGallery
+        photos={style.photos.map((photo) => ({ url: photo.url, alt: photo.alt }))}
+        fallbackAlt={style.name}
+      />
 
       <div>
         <p className="font-mono text-xs uppercase tracking-widest text-clay">{style.category.name}</p>

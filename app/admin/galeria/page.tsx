@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
 import { COOKIE_NAME, isValidSessionCookieValue } from "@/lib/adminSession";
 import { formatDuration, formatPriceFrom } from "@/lib/format";
-import { createGalleryItem, deleteGalleryItem, toggleGalleryItemActive } from "./actions";
+import { createCategory, createGalleryItem, deleteGalleryItem, toggleGalleryItemActive } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -41,27 +41,65 @@ export default async function AdminGaleriaPage() {
       </div>
 
       <section className="border-b border-line pb-10">
+        <h2 className="mb-1 text-sm uppercase tracking-widest text-ink/60">Categorías</h2>
+        <p className="mb-4 text-sm text-ink/60">
+          Agrupa tus estilos como quieras (ej. Clásicas, Diseños) — aparecen como filtros en el
+          catálogo y como secciones en la página de inicio.
+        </p>
+        {categories.length > 0 && (
+          <div className="mb-4 flex flex-wrap gap-2">
+            {categories.map((category) => (
+              <span
+                key={category.id}
+                className="rounded-full border border-line px-4 py-1.5 text-sm text-ink/80"
+              >
+                {category.name}
+              </span>
+            ))}
+          </div>
+        )}
+        <form action={createCategory} className="flex flex-wrap items-end gap-3">
+          <label className="flex flex-col gap-1 text-sm">
+            Nueva categoría
+            <input
+              type="text"
+              name="name"
+              required
+              placeholder="Ej. Diseños"
+              className="w-56 border border-line px-3 py-2 focus:border-ink focus:outline-none"
+            />
+          </label>
+          <button
+            type="submit"
+            className="border border-ink px-4 py-2 text-sm font-medium uppercase tracking-wide transition hover:bg-ink hover:text-white"
+          >
+            Añadir
+          </button>
+        </form>
+      </section>
+
+      <section className="border-b border-line pb-10">
         <h2 className="mb-1 text-sm uppercase tracking-widest text-ink/60">Añadir una foto</h2>
         <p className="mb-4 text-sm text-ink/60">
-          Sube una foto de un trabajo real. Rellena el precio, la duración y la longitud de pelo
-          mínima: esta información aparecerá en la ficha y permitirá a las clientas reservar
-          directamente desde la galería.
+          Sube una o varias fotos de un trabajo real (antes/después, distintos ángulos). Rellena
+          el precio, la duración y la longitud de pelo mínima: esta información aparecerá en la
+          ficha y permitirá a las clientas reservar directamente desde la galería.
         </p>
 
         {categories.length === 0 ? (
           <p className="text-sm text-red-600">
-            No hay categorías configuradas todavía. Contacta al desarrollador para crear al menos
-            una categoría antes de añadir fotos.
+            No hay categorías configuradas todavía. Créala primero en "Categorías" más abajo.
           </p>
         ) : (
           <form action={createGalleryItem} className="flex flex-col gap-4" encType="multipart/form-data">
             <label className="flex flex-col gap-1 text-sm">
-              Foto
+              Fotos (puedes seleccionar varias)
               <input
                 type="file"
-                name="photo"
+                name="photos"
                 accept="image/*"
                 required
+                multiple
                 className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
               />
             </label>

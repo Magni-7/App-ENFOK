@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
 import ContactButton from "@/components/ContactButton";
 import SalonCard from "@/components/SalonCard";
-import FeaturedStyleCard from "@/components/FeaturedStyleCard";
+import StyleThumb from "@/components/StyleThumb";
 
 // Les données (catégories, styles) changent en base y no deben quedar
 // fijadas al build: renderizado bajo demanda en lugar de estático.
@@ -17,12 +17,19 @@ export default async function HomePage() {
     orderBy: { order: "asc" },
   });
 
-  const featuredStyles = await prisma.style.findMany({
-    where: { professionalId: professional.id, isActive: true },
-    orderBy: [{ categoryId: "asc" }, { order: "asc" }],
-    take: 8,
-    include: { photos: { orderBy: { order: "asc" }, take: 1 } },
+  const categories = await prisma.category.findMany({
+    where: { professionalId: professional.id },
+    orderBy: { order: "asc" },
+    include: {
+      styles: {
+        where: { isActive: true },
+        orderBy: { order: "asc" },
+        take: 10,
+        include: { photos: { orderBy: { order: "asc" }, take: 1 } },
+      },
+    },
   });
+  const categoriesWithStyles = categories.filter((category) => category.styles.length > 0);
 
   return (
     <div className="flex flex-col gap-12">
@@ -54,26 +61,32 @@ export default async function HomePage() {
         </section>
       )}
 
-      <section>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-mono text-xs uppercase tracking-widest text-ink/60">Estilos destacados</h2>
-          <Link href="/catalogue" className="text-sm underline underline-offset-4 hover:no-underline">
-            Ver todo
-          </Link>
-        </div>
-        <div className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
-          {featuredStyles.map((style) => (
-            <FeaturedStyleCard
-              key={style.id}
-              id={style.id}
-              name={style.name}
-              photoUrl={style.photos[0]?.url ?? "/images/placeholder-style.svg"}
-              basePriceCents={style.basePriceCents}
-              durationMinutes={style.durationMinutes}
-            />
+      {categoriesWithStyles.length > 0 && (
+        <section className="flex flex-col gap-8">
+          <div className="flex items-center justify-between">
+            <h2 className="font-mono text-xs uppercase tracking-widest text-ink/60">Estilos</h2>
+            <Link href="/catalogue" className="text-sm underline underline-offset-4 hover:no-underline">
+              Ver todo
+            </Link>
+          </div>
+          {categoriesWithStyles.map((category) => (
+            <div key={category.id}>
+              <h3 className="mb-3 text-sm font-medium text-ink/80">{category.name}</h3>
+              <div className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
+                {category.styles.map((style) => (
+                  <StyleThumb
+                    key={style.id}
+                    id={style.id}
+                    name={style.name}
+                    photoUrl={style.photos[0]?.url ?? "/images/placeholder-style.svg"}
+                    basePriceCents={style.basePriceCents}
+                  />
+                ))}
+              </div>
+            </div>
           ))}
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="flex flex-col items-center gap-3 border-t border-line pt-10 text-center">
         <p className="max-w-sm text-sm text-ink/70">
