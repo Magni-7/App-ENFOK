@@ -185,6 +185,8 @@ model Client {
   id           String   @id @default(cuid())
   email        String   @unique
   name         String?
+  phone        String?
+  avatarUrl    String?
   passwordHash String
   createdAt    DateTime @default(now())
 
