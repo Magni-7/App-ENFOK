@@ -15,6 +15,9 @@ export default function Footer() {
           <Link href="/cookies" className="hover:text-ink">
             Política de cookies
           </Link>
+          <Link href="/admin/login" className="hover:text-ink">
+            Área profesional
+          </Link>
         </nav>
       </div>
     </footer>

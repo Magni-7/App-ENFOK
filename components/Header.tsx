@@ -1,6 +1,11 @@
+import { cookies } from "next/headers";
 import Link from "next/link";
+import { COOKIE_NAME, getProfessionalIdFromSession } from "@/lib/adminSession";
 
-export default function Header() {
+export default async function Header() {
+  const cookieStore = await cookies();
+  const isProfessional = Boolean(getProfessionalIdFromSession(cookieStore.get(COOKIE_NAME)?.value));
+
   return (
     <header className="border-b border-line">
       <div className="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6 sm:py-5">
@@ -18,15 +23,14 @@ export default function Header() {
           <Link href="/galeria" className="hover:opacity-60">
             Galería
           </Link>
-          <Link href="/cuenta/citas" className="hover:opacity-60">
-            Mis citas
-          </Link>
           <Link href="/cuenta" className="hover:opacity-60">
             Cuenta
           </Link>
-          <Link href="/admin" className="hover:opacity-60">
-            Pro
-          </Link>
+          {isProfessional && (
+            <Link href="/admin" className="hover:opacity-60">
+              Mi panel
+            </Link>
+          )}
         </nav>
       </div>
     </header>

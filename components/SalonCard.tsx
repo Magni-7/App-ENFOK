@@ -36,7 +36,13 @@ export default function SalonCard({
       <div className="p-4">
         <h3 className="font-serif text-base font-medium">{name}</h3>
         {address && <p className="mt-1 text-xs text-ink/60">{address}</p>}
-        <StarRating rating={rating} count={reviewCount} className="mt-2" />
+        {reviewCount > 0 ? (
+          <StarRating rating={rating} count={reviewCount} className="mt-2" />
+        ) : (
+          <span className="mt-2 inline-block rounded-full border border-clay/40 px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wide text-clay">
+            Nuevo
+          </span>
+        )}
       </div>
     </Link>
   );
