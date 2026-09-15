@@ -12,6 +12,7 @@ export async function registerClient(formData: FormData): Promise<void> {
   const email = String(formData.get("email") ?? "")
     .trim()
     .toLowerCase();
+  const phone = String(formData.get("phone") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
 
@@ -21,6 +22,10 @@ export async function registerClient(formData: FormData): Promise<void> {
 
   if (!email || !email.includes("@")) {
     redirect("/cuenta/registro?error=invalid_email");
+  }
+
+  if (!phone) {
+    redirect("/cuenta/registro?error=phone_required");
   }
 
   if (password.length < 8) {
@@ -38,7 +43,7 @@ export async function registerClient(formData: FormData): Promise<void> {
 
   const passwordHash = await hashPassword(password);
   const client = await prisma.client.create({
-    data: { email, name, passwordHash },
+    data: { email, name, phone, passwordHash },
   });
 
   await sendWelcomeEmail({ to: email }).catch(() => {

@@ -23,6 +23,9 @@ export async function updateAccountDetails(formData: FormData): Promise<void> {
   if (!email || !email.includes("@")) {
     redirect("/cuenta/detalles?error=invalid_email");
   }
+  if (!phone) {
+    redirect("/cuenta/detalles?error=phone_required");
+  }
 
   const existingWithEmail = await prisma.client.findUnique({ where: { email } });
   if (existingWithEmail && existingWithEmail.id !== client.id) {
@@ -31,7 +34,7 @@ export async function updateAccountDetails(formData: FormData): Promise<void> {
 
   await prisma.client.update({
     where: { id: client.id },
-    data: { name, email, phone: phone || null },
+    data: { name, email, phone },
   });
 
   redirect("/cuenta/detalles?actualizado=1");

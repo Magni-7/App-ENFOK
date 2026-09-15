@@ -15,6 +15,7 @@ type DetallesPageProps = {
 const ERROR_MESSAGES: Record<string, string> = {
   name_required: "Por favor indica tu nombre.",
   invalid_email: "Por favor indica un email válido.",
+  phone_required: "Por favor indica tu teléfono.",
   email_used: "Ya existe una cuenta con ese email.",
   current_password_invalid: "La contraseña actual no es correcta.",
   password_short: "La nueva contraseña debe tener al menos 8 caracteres.",
@@ -69,13 +70,16 @@ export default async function DetallesPage({ searchParams }: DetallesPageProps) 
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
-          Teléfono (opcional)
+          Teléfono
           <input
             type="tel"
             name="phone"
+            required
             defaultValue={client.phone ?? ""}
+            placeholder="+34600000000"
             className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
           />
+          <span className="text-xs text-ink/50">Lo usaremos para recordarte tus citas.</span>
         </label>
         <button
           type="submit"

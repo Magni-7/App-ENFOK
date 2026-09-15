@@ -16,6 +16,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   password_short: "La contraseña debe tener al menos 8 caracteres.",
   invalid_email: "Por favor indica un email válido.",
   name_required: "Por favor indica tu nombre.",
+  phone_required: "Por favor indica tu teléfono.",
 };
 
 export default async function RegistroPage({ searchParams }: RegistroPageProps) {
@@ -55,6 +56,17 @@ export default async function RegistroPage({ searchParams }: RegistroPageProps) 
             placeholder="tucorreo@ejemplo.com"
             className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
           />
+        </label>
+        <label className="flex flex-col gap-1 text-sm">
+          Teléfono
+          <input
+            type="tel"
+            name="phone"
+            required
+            placeholder="+34600000000"
+            className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
+          />
+          <span className="text-xs text-ink/50">Lo usaremos para recordarte tus citas.</span>
         </label>
         <label className="flex flex-col gap-1 text-sm">
           Contraseña
