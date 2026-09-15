@@ -70,10 +70,22 @@ type StyleItem = {
   photoUrl: string;
 };
 
+type ReviewItem = {
+  id: string;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+  styleName: string;
+};
+
+const reviewDateFormatter = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long", year: "numeric" });
+
 type ProfessionalProfileTabsProps = {
   displayName: string;
   bio: string | null;
   rating: number;
+  reviewCount: number;
+  reviews: ReviewItem[];
   whatsappNumber: string | null;
   instagramHandle: string | null;
   address: string | null;
@@ -90,6 +102,8 @@ export default function ProfessionalProfileTabs({
   displayName,
   bio,
   rating,
+  reviewCount,
+  reviews,
   whatsappNumber,
   instagramHandle,
   address,
@@ -157,12 +171,33 @@ export default function ProfessionalProfileTabs({
         )}
 
         {activeTab === "Reseñas" && (
-          <div className="flex flex-col items-center gap-3 py-8 text-center">
-            <p className="font-serif text-3xl font-semibold">{rating.toFixed(1)}/5</p>
-            <StarRating rating={rating} />
-            <p className="mt-2 max-w-sm text-sm text-ink/60">
-              Todavía no hay reseñas publicadas de clientas. ¡Sé la primera en reservar!
-            </p>
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col items-center gap-3 py-4 text-center">
+              <p className="font-serif text-3xl font-semibold">{rating.toFixed(1)}/5</p>
+              <StarRating rating={rating} />
+              <p className="text-sm text-ink/60">
+                {reviewCount === 0
+                  ? "Todavía no hay reseñas publicadas de clientas. ¡Sé la primera en reservar!"
+                  : `${reviewCount} reseña${reviewCount === 1 ? "" : "s"}`}
+              </p>
+            </div>
+
+            {reviews.length > 0 && (
+              <div className="flex flex-col divide-y divide-line border-y border-line">
+                {reviews.map((review) => (
+                  <div key={review.id} className="flex flex-col gap-1 py-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <StarRating rating={review.rating} />
+                      <span className="text-xs text-ink/50">
+                        {reviewDateFormatter.format(new Date(review.createdAt))}
+                      </span>
+                    </div>
+                    <p className="text-xs text-ink/50">{review.styleName}</p>
+                    {review.comment && <p className="mt-1 text-sm text-ink/80">{review.comment}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

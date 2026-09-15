@@ -1,9 +1,10 @@
 type StarRatingProps = {
   rating: number;
+  count?: number;
   className?: string;
 };
 
-export default function StarRating({ rating, className = "" }: StarRatingProps) {
+export default function StarRating({ rating, count, className = "" }: StarRatingProps) {
   const rounded = Math.round(rating * 2) / 2;
 
   return (
@@ -31,7 +32,10 @@ export default function StarRating({ rating, className = "" }: StarRatingProps) 
           );
         })}
       </div>
-      <span className="font-mono text-xs text-ink/70">{rating.toFixed(1)}</span>
+      <span className="font-mono text-xs text-ink/70">
+        {rating.toFixed(1)}
+        {typeof count === "number" && ` (${count})`}
+      </span>
     </div>
   );
 }

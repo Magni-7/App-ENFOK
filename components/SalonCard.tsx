@@ -8,9 +8,17 @@ type SalonCardProps = {
   photoUrl: string;
   address?: string | null;
   rating: number;
+  reviewCount: number;
 };
 
-export default function SalonCard({ professionalSlug, name, photoUrl, address, rating }: SalonCardProps) {
+export default function SalonCard({
+  professionalSlug,
+  name,
+  photoUrl,
+  address,
+  rating,
+  reviewCount,
+}: SalonCardProps) {
   return (
     <Link
       href={`/profesionales/${professionalSlug}`}
@@ -28,7 +36,7 @@ export default function SalonCard({ professionalSlug, name, photoUrl, address, r
       <div className="p-4">
         <h3 className="font-serif text-base font-medium">{name}</h3>
         {address && <p className="mt-1 text-xs text-ink/60">{address}</p>}
-        <StarRating rating={rating} className="mt-2" />
+        <StarRating rating={rating} count={reviewCount} className="mt-2" />
       </div>
     </Link>
   );

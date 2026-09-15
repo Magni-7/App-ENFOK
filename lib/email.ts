@@ -30,3 +30,38 @@ export async function sendWelcomeEmail({ to }: SendWelcomeEmailParams): Promise<
 
   await resend.emails.send({ from: FROM_EMAIL, to, subject: "¡Bienvenida a Trenzame!", html });
 }
+
+type SendReviewRequestEmailParams = {
+  to: string;
+  professionalDisplayName: string;
+  styleName: string;
+  reviewUrl: string;
+};
+
+export async function sendReviewRequestEmail({
+  to,
+  professionalDisplayName,
+  styleName,
+  reviewUrl,
+}: SendReviewRequestEmailParams): Promise<void> {
+  const resend = getResend();
+
+  const html = `
+    <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+      <p>¿Qué tal tu cita de "${styleName}" con ${professionalDisplayName}?</p>
+      <p>Tu opinión ayuda a otras clientas a elegir con confianza.</p>
+      <p style="margin: 24px 0;">
+        <a href="${reviewUrl}" style="background:#8a3324;color:#fff;padding:12px 24px;text-decoration:none;border-radius:4px;display:inline-block;">
+          Dejar mi valoración
+        </a>
+      </p>
+    </div>
+  `;
+
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: `¿Qué tal tu cita con ${professionalDisplayName}?`,
+    html,
+  });
+}

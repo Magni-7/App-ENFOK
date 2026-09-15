@@ -18,7 +18,7 @@ export default async function CitasPage() {
 
   const bookings = await prisma.booking.findMany({
     where: { clientId: client.id },
-    include: { style: true, slot: true },
+    include: { style: true, slot: true, review: true },
     orderBy: { slot: { startAt: "desc" } },
   });
 
@@ -67,12 +67,22 @@ export default async function CitasPage() {
                     {formatSlotDate(booking.slot.startAt)}
                   </p>
                 </div>
-                <Link
-                  href={`/reserver/${booking.style.id}`}
-                  className="self-start border border-line px-4 py-2 text-xs font-medium uppercase tracking-wide transition hover:border-clay hover:text-clay"
-                >
-                  Reservar de nuevo
-                </Link>
+                <div className="flex shrink-0 gap-2">
+                  {booking.status === "CONFIRMED" && !booking.review && (
+                    <Link
+                      href={`/resenar/${booking.id}`}
+                      className="self-start border border-ink bg-ink px-4 py-2 text-xs font-medium uppercase tracking-wide text-white transition hover:bg-paper hover:text-ink"
+                    >
+                      Valorar
+                    </Link>
+                  )}
+                  <Link
+                    href={`/reserver/${booking.style.id}`}
+                    className="self-start border border-line px-4 py-2 text-xs font-medium uppercase tracking-wide transition hover:border-clay hover:text-clay"
+                  >
+                    Reservar de nuevo
+                  </Link>
+                </div>
               </div>
             ))}
           </div>

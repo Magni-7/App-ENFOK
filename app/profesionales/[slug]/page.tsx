@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getProfessionalRatingSummary } from "@/lib/reviews";
 import StarRating from "@/components/StarRating";
 import ProfessionalProfileTabs from "@/components/ProfessionalProfileTabs";
 
@@ -42,6 +43,16 @@ export default async function ProfessionalPage({ params }: ProfessionalPageProps
     notFound();
   }
 
+  const [ratingSummary, reviews] = await Promise.all([
+    getProfessionalRatingSummary(professional.id),
+    prisma.review.findMany({
+      where: { professionalId: professional.id },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+      include: { booking: { include: { style: true } } },
+    }),
+  ]);
+
   const mainSalon = professional.salons[0];
 
   const styles = professional.styles
@@ -72,13 +83,21 @@ export default async function ProfessionalPage({ params }: ProfessionalPageProps
       <div>
         <h1 className="font-serif text-2xl font-semibold tracking-tight">{professional.displayName}</h1>
         {mainSalon?.address && <p className="mt-1 text-sm text-ink/60">{mainSalon.address}</p>}
-        <StarRating rating={professional.rating} className="mt-2" />
+        <StarRating rating={ratingSummary.average} count={ratingSummary.count} className="mt-2" />
       </div>
 
       <ProfessionalProfileTabs
         displayName={professional.displayName}
         bio={professional.bio}
-        rating={professional.rating}
+        rating={ratingSummary.average}
+        reviewCount={ratingSummary.count}
+        reviews={reviews.map((review) => ({
+          id: review.id,
+          rating: review.rating,
+          comment: review.comment,
+          createdAt: review.createdAt.toISOString(),
+          styleName: review.booking.style.name,
+        }))}
         whatsappNumber={professional.whatsappNumber}
         instagramHandle={professional.instagramHandle}
         address={mainSalon?.address ?? null}

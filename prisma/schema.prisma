@@ -26,10 +26,6 @@ model Professional {
   whatsappNumber      String?
   email               String?
 
-  // Note affichée en étoiles (sur 5) sur le profil et la page d'accueil.
-  // 0 tant qu'aucune cliente n'a encore laissé d'avis (pas de faux chiffre).
-  rating              Float    @default(0)
-
   // Disponibilité : fenêtre de travail quotidienne (en minutes depuis minuit,
   // ex. 540 = 9h00, 1200 = 20h00), jours de repos (0 = dimanche .. 6 = samedi,
   // comme Date.getDay()) et marge de sécurité ajoutée après chaque rendez-vous
@@ -52,6 +48,7 @@ model Professional {
   slots      Slot[]
   bookings   Booking[]
   salons     Salon[]
+  reviews    Review[]
 }
 
 // Lieu physique où une professionnelle reçoit ses clientes (ex. un local
@@ -160,6 +157,26 @@ model Booking {
   notes       String?
   status      String        @default("CONFIRMED")
   createdAt   DateTime      @default(now())
+
+  // Horodatage d'envoi de l'email "note ta cita" (voir cron
+  // /api/cron/send-review-requests) : évite de le renvoyer plusieurs fois.
+  reviewRequestedAt DateTime?
+  review            Review?
+}
+
+// Un avis par cita, laissé après le rendez-vous via le lien envoyé par email
+// (voir /resenar/[bookingId]). Note de 1 à 5, commentaire facultatif.
+model Review {
+  id             String       @id @default(cuid())
+  bookingId      String       @unique
+  booking        Booking      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+  rating         Int
+  comment        String?
+  createdAt      DateTime     @default(now())
+
+  @@index([professionalId])
 }
 
 // Espace client : connexion classique par email + mot de passe. Le mot de

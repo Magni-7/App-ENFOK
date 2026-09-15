@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
+import { getProfessionalRatingSummary } from "@/lib/reviews";
 import SalonCard from "@/components/SalonCard";
 
 // Les données (catégories, styles) changent en base y no deben quedar
@@ -9,10 +10,13 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const professional = await getDefaultProfessional();
 
-  const salons = await prisma.salon.findMany({
-    where: { professionalId: professional.id },
-    orderBy: { order: "asc" },
-  });
+  const [salons, ratingSummary] = await Promise.all([
+    prisma.salon.findMany({
+      where: { professionalId: professional.id },
+      orderBy: { order: "asc" },
+    }),
+    getProfessionalRatingSummary(professional.id),
+  ]);
 
   return (
     <div className="flex flex-col gap-12">
@@ -37,7 +41,8 @@ export default async function HomePage() {
                 name={salon.name}
                 photoUrl={salon.photoUrl}
                 address={salon.address}
-                rating={professional.rating}
+                rating={ratingSummary.average}
+                reviewCount={ratingSummary.count}
               />
             ))}
           </div>
