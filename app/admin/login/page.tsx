@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { login } from "../actions";
 
 type LoginPageProps = {
@@ -12,18 +13,27 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
 
       <form action={login} className="flex flex-col gap-4">
         <label className="flex flex-col gap-1 text-sm">
-          Contraseña
+          Email
           <input
-            type="password"
-            name="password"
+            type="email"
+            name="email"
             required
             autoFocus
             className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
           />
         </label>
+        <label className="flex flex-col gap-1 text-sm">
+          Contraseña
+          <input
+            type="password"
+            name="password"
+            required
+            className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
+          />
+        </label>
 
         {error && (
-          <p className="text-sm text-red-600">Contraseña incorrecta.</p>
+          <p className="text-sm text-red-600">Email o contraseña incorrectos.</p>
         )}
 
         <button
@@ -33,6 +43,12 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
           Iniciar sesión
         </button>
       </form>
+
+      <p className="text-center text-sm text-ink/70">
+        <Link href="/admin/recuperar" className="underline underline-offset-4 hover:text-ink">
+          ¿Olvidaste tu contraseña?
+        </Link>
+      </p>
     </div>
   );
 }

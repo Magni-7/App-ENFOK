@@ -56,6 +56,9 @@ export default async function AdminPage() {
           <Link href="/admin/galeria" className="text-sm underline underline-offset-4 hover:text-ink">
             Gestionar galería
           </Link>
+          <Link href="/admin/detalles" className="text-sm underline underline-offset-4 hover:text-ink">
+            Detalles de la cuenta
+          </Link>
           <form action={logout}>
             <button type="submit" className="text-sm text-ink/60 underline underline-offset-4 hover:text-ink">
               Cerrar sesión

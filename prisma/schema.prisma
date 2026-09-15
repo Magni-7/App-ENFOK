@@ -24,7 +24,11 @@ model Professional {
   instagramHandle     String?
   instagramDmUsername String?
   whatsappNumber      String?
-  email               String?
+  email               String?  @unique
+  // Hachage scrypt (voir lib/password.ts), comme Client.passwordHash.
+  // Nullable pour l'instant : ensure-seed-data.ts le déduit de l'ancien
+  // ADMIN_PASSWORD partagé au premier déploiement de ce champ.
+  passwordHash        String?
 
   // Disponibilité : fenêtre de travail quotidienne (en minutes depuis minuit,
   // ex. 540 = 9h00, 1200 = 20h00), jours de repos (0 = dimanche .. 6 = samedi,
@@ -48,6 +52,7 @@ model Professional {
   slots      Slot[]
   bookings   Booking[]
   salons     Salon[]
+  passwordResetTokens ProfessionalPasswordResetToken[]
   reviews    Review[]
 }
 
@@ -207,4 +212,17 @@ model PasswordResetToken {
   createdAt DateTime  @default(now())
 
   @@index([clientId])
+}
+
+// Même mécanisme que PasswordResetToken, pour l'espace professionnel.
+model ProfessionalPasswordResetToken {
+  id             String       @id @default(cuid())
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+  token          String       @unique
+  expiresAt      DateTime
+  usedAt         DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@index([professionalId])
 }

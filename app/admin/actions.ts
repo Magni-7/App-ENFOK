@@ -8,6 +8,7 @@ import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
 import { COOKIE_NAME, createSessionCookieValue, isValidSessionCookieValue } from "@/lib/adminSession";
 import { resizeImage } from "@/lib/image";
+import { hashPassword, verifyPassword } from "@/lib/password";
 
 const SALON_PHOTO_MAX_WIDTH = 1600;
 
@@ -20,10 +21,17 @@ async function requireAdminSession(): Promise<void> {
 }
 
 export async function login(formData: FormData): Promise<void> {
+  const email = String(formData.get("email") ?? "")
+    .trim()
+    .toLowerCase();
   const password = String(formData.get("password") ?? "");
-  const expected = process.env.ADMIN_PASSWORD;
 
-  if (!expected || password !== expected) {
+  const professional = email ? await prisma.professional.findUnique({ where: { email } }) : null;
+  const passwordValid = professional?.passwordHash
+    ? await verifyPassword(password, professional.passwordHash)
+    : false;
+
+  if (!professional || !passwordValid) {
     redirect("/admin/login?error=1");
   }
 
@@ -113,4 +121,66 @@ export async function updateSalonPhoto(formData: FormData): Promise<void> {
   revalidatePath("/");
   revalidatePath(`/profesionales/${professional.slug}`);
   redirect("/admin");
+}
+
+export async function updateAccountDetails(formData: FormData): Promise<void> {
+  await requireAdminSession();
+
+  const professional = await getDefaultProfessional();
+
+  const displayName = String(formData.get("displayName") ?? "").trim();
+  const email = String(formData.get("email") ?? "")
+    .trim()
+    .toLowerCase();
+  const whatsappNumber = String(formData.get("whatsappNumber") ?? "").trim();
+
+  if (!displayName) {
+    redirect("/admin/detalles?error=name_required");
+  }
+  if (!email || !email.includes("@")) {
+    redirect("/admin/detalles?error=invalid_email");
+  }
+
+  const existingWithEmail = await prisma.professional.findUnique({ where: { email } });
+  if (existingWithEmail && existingWithEmail.id !== professional.id) {
+    redirect("/admin/detalles?error=email_used");
+  }
+
+  await prisma.professional.update({
+    where: { id: professional.id },
+    data: { displayName, email, whatsappNumber: whatsappNumber || null },
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/");
+  revalidatePath(`/profesionales/${professional.slug}`);
+  redirect("/admin/detalles?actualizado=1");
+}
+
+export async function updateAccountPassword(formData: FormData): Promise<void> {
+  await requireAdminSession();
+
+  const professional = await getDefaultProfessional();
+
+  const currentPassword = String(formData.get("currentPassword") ?? "");
+  const newPassword = String(formData.get("newPassword") ?? "");
+  const newPasswordConfirm = String(formData.get("newPasswordConfirm") ?? "");
+
+  const currentValid = professional.passwordHash
+    ? await verifyPassword(currentPassword, professional.passwordHash)
+    : false;
+  if (!currentValid) {
+    redirect("/admin/detalles?error=current_password_invalid");
+  }
+  if (newPassword.length < 8) {
+    redirect("/admin/detalles?error=password_short");
+  }
+  if (newPassword !== newPasswordConfirm) {
+    redirect("/admin/detalles?error=password_mismatch");
+  }
+
+  const passwordHash = await hashPassword(newPassword);
+  await prisma.professional.update({ where: { id: professional.id }, data: { passwordHash } });
+
+  redirect("/admin/detalles?actualizado=1");
 }

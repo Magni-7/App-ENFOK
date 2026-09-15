@@ -1,8 +1,9 @@
 import { PrismaClient } from "@prisma/client";
+import { hashPassword } from "../lib/password";
 
-// Script idempotent (upsert) exécuté une fois au build pour ajouter le salon
-// ENFOK.O Barbershop sans toucher aux données déjà en production (contrairement
-// à seed.ts qui efface tout). À retirer du script "build" une fois déployé.
+// Script idempotent (upsert) exécuté à chaque build pour garder certaines
+// données de production synchronisées sans jamais les effacer (contrairement
+// à seed.ts, destructif, réservé au développement local).
 const prisma = new PrismaClient();
 
 const DEFAULT_PROFESSIONAL_SLUG = "eva";
@@ -25,6 +26,14 @@ async function main() {
       email: "enfoko.bcn@gmail.com",
     },
   });
+
+  // Migration en douceur du mot de passe admin partagé (ADMIN_PASSWORD) vers
+  // un vrai compte : tant qu'aucun mot de passe propre n'a été choisi, on
+  // reprend celui-là pour que la connexion existante continue de marcher.
+  if (!professional.passwordHash && process.env.ADMIN_PASSWORD) {
+    const passwordHash = await hashPassword(process.env.ADMIN_PASSWORD);
+    await prisma.professional.update({ where: { id: professional.id }, data: { passwordHash } });
+  }
 
   await prisma.salon.upsert({
     where: {
