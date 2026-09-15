@@ -55,6 +55,12 @@ export default async function ClientLoginPage({ searchParams }: LoginPageProps) 
       </form>
 
       <p className="text-center text-sm text-ink/70">
+        <Link href="/cuenta/recuperar" className="underline underline-offset-4 hover:text-ink">
+          ¿Olvidaste tu contraseña?
+        </Link>
+      </p>
+
+      <p className="text-center text-sm text-ink/70">
         ¿No tienes cuenta todavía?{" "}
         <Link href="/cuenta/registro" className="underline underline-offset-4 hover:text-ink">
           Regístrate

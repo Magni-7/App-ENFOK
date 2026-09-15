@@ -65,3 +65,26 @@ export async function sendReviewRequestEmail({
     html,
   });
 }
+
+type SendPasswordResetEmailParams = {
+  to: string;
+  resetUrl: string;
+};
+
+export async function sendPasswordResetEmail({ to, resetUrl }: SendPasswordResetEmailParams): Promise<void> {
+  const resend = getResend();
+
+  const html = `
+    <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+      <p>Has pedido restablecer tu contraseña de Trenzame.</p>
+      <p style="margin: 24px 0;">
+        <a href="${resetUrl}" style="background:#8a3324;color:#fff;padding:12px 24px;text-decoration:none;border-radius:4px;display:inline-block;">
+          Elegir nueva contraseña
+        </a>
+      </p>
+      <p style="color:#6b6459;font-size:13px;">Este enlace caduca en 30 minutos y solo puede usarse una vez. Si no has pedido esto, puedes ignorar este email.</p>
+    </div>
+  `;
+
+  await resend.emails.send({ from: FROM_EMAIL, to, subject: "Restablece tu contraseña — Trenzame", html });
+}

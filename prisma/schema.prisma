@@ -190,5 +190,21 @@ model Client {
   passwordHash String
   createdAt    DateTime @default(now())
 
-  bookings Booking[]
+  bookings            Booking[]
+  passwordResetTokens PasswordResetToken[]
+}
+
+// Jeton à usage unique envoyé par email pour réinitialiser le mot de passe
+// (voir /cuenta/recuperar et /cuenta/restablecer). Expire après un court
+// délai, comme l'ancien LoginToken du lien magique.
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  clientId  String
+  client    Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([clientId])
 }

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentClient } from "@/lib/clientAuth";
 import { formatSlotDate, formatSlotTime, formatPriceFrom } from "@/lib/format";
+import { cancelBooking } from "./actions";
 
 export const metadata: Metadata = {
   title: "Mis citas — Trenzame",
@@ -37,14 +38,25 @@ export default async function CitasPage() {
         ) : (
           <div className="flex flex-col divide-y divide-line border-y border-line">
             {upcoming.map((booking) => (
-              <div key={booking.id} className="flex items-center justify-between gap-4 py-4">
+              <div key={booking.id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="font-serif font-medium">{booking.style.name}</p>
                   <p className="mt-1 font-mono text-xs text-ink/60">{formatPriceFrom(booking.style.basePriceCents)}</p>
                 </div>
-                <div className="text-right text-sm">
-                  <p>{formatSlotDate(booking.slot.startAt)}</p>
-                  <p className="font-mono text-ink/70">{formatSlotTime(booking.slot.startAt)}</p>
+                <div className="flex items-center gap-4 sm:gap-6">
+                  <div className="text-right text-sm">
+                    <p>{formatSlotDate(booking.slot.startAt)}</p>
+                    <p className="font-mono text-ink/70">{formatSlotTime(booking.slot.startAt)}</p>
+                  </div>
+                  <form action={cancelBooking}>
+                    <input type="hidden" name="bookingId" value={booking.id} />
+                    <button
+                      type="submit"
+                      className="shrink-0 border border-line px-3 py-2 text-xs font-medium uppercase tracking-wide text-ink/60 transition hover:border-clay hover:text-clay"
+                    >
+                      Cancelar
+                    </button>
+                  </form>
                 </div>
               </div>
             ))}
