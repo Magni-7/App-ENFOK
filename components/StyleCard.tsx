@@ -8,9 +8,17 @@ type StyleCardProps = {
   photoUrl: string;
   basePriceCents: number;
   durationMinutes: number;
+  professionalName?: string;
 };
 
-export default function StyleCard({ id, name, photoUrl, basePriceCents, durationMinutes }: StyleCardProps) {
+export default function StyleCard({
+  id,
+  name,
+  photoUrl,
+  basePriceCents,
+  durationMinutes,
+  professionalName,
+}: StyleCardProps) {
   return (
     <Link
       href={`/styles/${id}`}
@@ -27,6 +35,7 @@ export default function StyleCard({ id, name, photoUrl, basePriceCents, duration
       </div>
       <div className="p-4">
         <h3 className="font-serif text-base font-medium">{name}</h3>
+        {professionalName && <p className="mt-0.5 text-xs text-ink/60">{professionalName}</p>}
         <p className="mt-1 font-mono text-xs text-ink/70">
           {formatPriceFrom(basePriceCents)} · {formatDuration(durationMinutes)}
         </p>

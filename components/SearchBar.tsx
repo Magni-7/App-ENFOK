@@ -1,10 +1,16 @@
 type SearchBarProps = {
   defaultValue?: string;
+  salon?: string;
+  categorie?: string;
+  sort?: string;
 };
 
-export default function SearchBar({ defaultValue }: SearchBarProps) {
+export default function SearchBar({ defaultValue, salon, categorie, sort }: SearchBarProps) {
   return (
     <form action="/catalogue" method="GET" className="relative">
+      {salon && <input type="hidden" name="salon" value={salon} />}
+      {categorie && <input type="hidden" name="categorie" value={categorie} />}
+      {sort && <input type="hidden" name="sort" value={sort} />}
       <svg
         aria-hidden="true"
         viewBox="0 0 24 24"

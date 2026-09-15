@@ -1,13 +1,13 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { getDefaultProfessional } from "@/lib/professional";
 import CategoryChips from "@/components/CategoryChips";
+import SalonChips from "@/components/SalonChips";
 import SearchBar from "@/components/SearchBar";
 import SortSelect from "@/components/SortSelect";
 import StyleCard from "@/components/StyleCard";
 
 type CataloguePageProps = {
-  searchParams: Promise<{ categorie?: string; q?: string; sort?: string }>;
+  searchParams: Promise<{ salon?: string; categorie?: string; q?: string; sort?: string }>;
 };
 
 const SORT_OPTIONS: Record<string, Prisma.StyleOrderByWithRelationInput[]> = {
@@ -17,28 +17,40 @@ const SORT_OPTIONS: Record<string, Prisma.StyleOrderByWithRelationInput[]> = {
 };
 
 export default async function CataloguePage({ searchParams }: CataloguePageProps) {
-  const { categorie, q, sort } = await searchParams;
-  const professional = await getDefaultProfessional();
-  const orderBy = (sort && SORT_OPTIONS[sort]) || [{ categoryId: "asc" }, { order: "asc" }];
+  const { salon, categorie, q, sort } = await searchParams;
+  const orderBy = (sort && SORT_OPTIONS[sort]) || [{ createdAt: "desc" as const }];
 
-  const [categories, styles] = await Promise.all([
-    prisma.category.findMany({
-      where: { professionalId: professional.id },
-      orderBy: { order: "asc" },
+  const professional = salon
+    ? await prisma.professional.findUnique({ where: { slug: salon } })
+    : null;
+
+  const [salons, categories, styles] = await Promise.all([
+    prisma.professional.findMany({
+      select: { slug: true, displayName: true },
+      orderBy: { createdAt: "asc" },
     }),
+    professional
+      ? prisma.category.findMany({
+          where: { professionalId: professional.id },
+          orderBy: { order: "asc" },
+        })
+      : Promise.resolve([]),
     prisma.style.findMany({
       where: {
-        professionalId: professional.id,
         isActive: true,
-        ...(categorie ? { category: { slug: categorie } } : {}),
+        ...(professional ? { professionalId: professional.id } : {}),
+        ...(categorie && professional ? { category: { slug: categorie } } : {}),
         ...(q ? { name: { contains: q, mode: "insensitive" } } : {}),
       },
-      include: { photos: { orderBy: { order: "asc" }, take: 1 } },
+      include: {
+        photos: { orderBy: { order: "asc" }, take: 1 },
+        professional: { select: { displayName: true } },
+      },
       orderBy,
     }),
   ]);
 
-  const activeCategory = categorie
+  const activeCategory = categorie && professional
     ? categories.find((c) => c.slug === categorie)
     : undefined;
 
@@ -49,18 +61,22 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
         <p className="mt-2 text-sm text-ink/70">
           {q
             ? `Resultados para "${q}"`
-            : activeCategory
-              ? `Categoría: ${activeCategory.name}`
-              : "Todos los estilos disponibles."}
+            : professional
+              ? `Salón: ${professional.displayName}${activeCategory ? ` · ${activeCategory.name}` : ""}`
+              : "Todos los estilos disponibles, de todos nuestros salones."}
         </p>
       </div>
 
-      <SearchBar defaultValue={q} />
+      <SearchBar defaultValue={q} salon={salon} categorie={categorie} sort={sort} />
 
-      <CategoryChips
-        categories={categories.map((c) => ({ slug: c.slug, name: c.name }))}
-        activeSlug={activeCategory?.slug}
-      />
+      <SalonChips salons={salons} activeSlug={professional?.slug} />
+
+      {professional && categories.length > 0 && (
+        <CategoryChips
+          categories={categories.map((c) => ({ slug: c.slug, name: c.name }))}
+          activeSlug={activeCategory?.slug}
+        />
+      )}
 
       <div className="flex justify-end">
         <SortSelect />
@@ -68,7 +84,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
 
       {styles.length === 0 ? (
         <p className="text-sm text-ink/60">
-          {q ? `Ningún estilo coincide con "${q}".` : "No hay estilos disponibles en esta categoría por ahora."}
+          {q ? `Ningún estilo coincide con "${q}".` : "No hay estilos disponibles con estos filtros por ahora."}
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -80,6 +96,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
               photoUrl={style.photos[0]?.url ?? "/images/placeholder-style.svg"}
               basePriceCents={style.basePriceCents}
               durationMinutes={style.durationMinutes}
+              professionalName={professional ? undefined : style.professional.displayName}
             />
           ))}
         </div>
