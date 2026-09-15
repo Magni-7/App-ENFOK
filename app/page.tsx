@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getDefaultProfessional } from "@/lib/professional";
 import { getProfessionalRatingSummary } from "@/lib/reviews";
 import SalonCard from "@/components/SalonCard";
+import StyleThumb from "@/components/StyleThumb";
 
 // Les données (catégories, styles) changent en base y no deben quedar
 // fijadas al build: renderizado bajo demanda en lugar de estático.
@@ -10,12 +12,18 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const professional = await getDefaultProfessional();
 
-  const [salons, ratingSummary] = await Promise.all([
+  const [salons, ratingSummary, styles] = await Promise.all([
     prisma.salon.findMany({
       where: { professionalId: professional.id },
       orderBy: { order: "asc" },
     }),
     getProfessionalRatingSummary(professional.id),
+    prisma.style.findMany({
+      where: { professionalId: professional.id, isActive: true },
+      orderBy: { createdAt: "desc" },
+      take: 12,
+      include: { photos: { orderBy: { order: "asc" }, take: 1 } },
+    }),
   ]);
 
   return (
@@ -45,6 +53,32 @@ export default async function HomePage() {
                 reviewCount={ratingSummary.count}
               />
             ))}
+          </div>
+        </section>
+      )}
+
+      {styles.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-mono text-xs uppercase tracking-widest text-ink/60">Modelos</h2>
+            <Link href="/catalogue" className="text-sm underline underline-offset-4 hover:no-underline">
+              Ver todo
+            </Link>
+          </div>
+          <div className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
+            {styles.map((style) => {
+              const photo = style.photos[0];
+              if (!photo) return null;
+              return (
+                <StyleThumb
+                  key={style.id}
+                  id={style.id}
+                  name={style.name}
+                  photoUrl={photo.url}
+                  basePriceCents={style.basePriceCents}
+                />
+              );
+            })}
           </div>
         </section>
       )}

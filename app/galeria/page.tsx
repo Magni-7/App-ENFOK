@@ -73,22 +73,20 @@ export default async function GaleriaPage() {
       <div>
         <h2 className="mb-3 font-mono text-xs uppercase tracking-widest text-ink/60">Más trabajos</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {legacyPhotos.map((src) => (
-            <a
+          {legacyPhotos.map((src, i) => (
+            <Link
               key={src}
-              href={src}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="relative block aspect-square overflow-hidden border border-line"
+              href={`/galeria/legado/${i + 1}`}
+              className="group relative block aspect-square overflow-hidden border border-line"
             >
               <Image
                 src={src}
                 alt="Trabajo de trenzas realizado por Eva"
                 fill
-                className="object-cover"
+                className="object-cover transition duration-300 group-hover:scale-105"
                 sizes="(min-width: 640px) 33vw, 50vw"
               />
-            </a>
+            </Link>
           ))}
         </div>
       </div>
