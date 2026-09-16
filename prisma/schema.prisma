@@ -181,6 +181,9 @@ model Booking {
   // Horodatage d'envoi de l'email "note ta cita" (voir cron
   // /api/cron/send-review-requests) : évite de le renvoyer plusieurs fois.
   reviewRequestedAt DateTime?
+  // Horodatage d'envoi du rappel 24h avant (voir cron
+  // /api/cron/send-booking-reminders) : évite de le renvoyer plusieurs fois.
+  reminderSentAt    DateTime?
   review            Review?
 }
 

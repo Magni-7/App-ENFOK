@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { formatSlotDate, formatSlotTime } from "@/lib/format";
 
 // En-tête partagé des 4 emails : mise en page en <table> (pas flex/grid,
 // ignorés par le moteur de rendu Word d'Outlook desktop), width/height en
@@ -134,4 +135,95 @@ export async function sendPasswordResetEmail({ to, resetUrl }: SendPasswordReset
   `;
 
   await resend.emails.send({ from: FROM_EMAIL, to, subject: "Restablece tu contraseña — Trenzame", html });
+}
+
+type SendBookingConfirmationEmailParams = {
+  to: string;
+  professionalDisplayName: string;
+  styleName: string;
+  startAt: Date;
+  priceLabel: string;
+};
+
+// À la cliente, juste après la réservation.
+export async function sendBookingConfirmationEmail({
+  to,
+  professionalDisplayName,
+  styleName,
+  startAt,
+  priceLabel,
+}: SendBookingConfirmationEmailParams): Promise<void> {
+  const resend = getResend();
+
+  const html = `
+    <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+      ${EMAIL_HEADER}
+      <p>¡Tu cita está confirmada!</p>
+      <p><strong>${styleName}</strong> con ${professionalDisplayName}</p>
+      <p>${formatSlotDate(startAt)} · ${formatSlotTime(startAt)}</p>
+      <p>${priceLabel}</p>
+    </div>
+  `;
+
+  await resend.emails.send({ from: FROM_EMAIL, to, subject: `Cita confirmada — ${styleName}`, html });
+}
+
+type SendBookingNotificationEmailParams = {
+  to: string;
+  clientName: string;
+  clientPhone: string;
+  styleName: string;
+  startAt: Date;
+};
+
+// Au professionnel, juste après la réservation, avec les coordonnées de la
+// cliente pour qu'il puisse la contacter si besoin.
+export async function sendBookingNotificationEmail({
+  to,
+  clientName,
+  clientPhone,
+  styleName,
+  startAt,
+}: SendBookingNotificationEmailParams): Promise<void> {
+  const resend = getResend();
+
+  const html = `
+    <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+      ${EMAIL_HEADER}
+      <p>Nueva reserva recibida.</p>
+      <p><strong>${styleName}</strong></p>
+      <p>${formatSlotDate(startAt)} · ${formatSlotTime(startAt)}</p>
+      <p>Clienta: ${clientName} · ${clientPhone}</p>
+    </div>
+  `;
+
+  await resend.emails.send({ from: FROM_EMAIL, to, subject: `Nueva reserva — ${styleName}`, html });
+}
+
+type SendBookingReminderEmailParams = {
+  to: string;
+  professionalDisplayName: string;
+  styleName: string;
+  startAt: Date;
+};
+
+// Rappel automatique 24h avant le rendez-vous (voir cron
+// /api/cron/send-booking-reminders).
+export async function sendBookingReminderEmail({
+  to,
+  professionalDisplayName,
+  styleName,
+  startAt,
+}: SendBookingReminderEmailParams): Promise<void> {
+  const resend = getResend();
+
+  const html = `
+    <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+      ${EMAIL_HEADER}
+      <p>Recordatorio: mañana a las ${formatSlotTime(startAt)} tienes tu cita de "${styleName}" con
+      ${professionalDisplayName}.</p>
+    </div>
+  `;
+
+  await resend.emails.send({ from: FROM_EMAIL, to, subject: `Mañana: tu cita de ${styleName}`, html });
 }
