@@ -3,6 +3,8 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentClient } from "@/lib/clientAuth";
+import { sendBookingConfirmationEmail, sendBookingNotificationEmail } from "@/lib/email";
+import { formatPriceFrom } from "@/lib/format";
 
 export async function createBooking(formData: FormData): Promise<void> {
   const styleId = String(formData.get("styleId") ?? "");
@@ -65,6 +67,36 @@ export async function createBooking(formData: FormData): Promise<void> {
       },
     });
   });
+
+  // Les emails ne doivent jamais faire échouer une réservation déjà confirmée
+  // en base (mail non vérifié, Resend indisponible, etc.).
+  if (booking.clientEmail) {
+    try {
+      await sendBookingConfirmationEmail({
+        to: booking.clientEmail,
+        professionalDisplayName: professional.displayName,
+        styleName: style.name,
+        startAt,
+        priceLabel: formatPriceFrom(style.basePriceCents),
+      });
+    } catch (error) {
+      console.error(`Erreur en envoyant la confirmation de réservation ${booking.id}`, error);
+    }
+  }
+
+  if (professional.email) {
+    try {
+      await sendBookingNotificationEmail({
+        to: professional.email,
+        clientName,
+        clientPhone,
+        styleName: style.name,
+        startAt,
+      });
+    } catch (error) {
+      console.error(`Erreur en envoyant la notification de réservation ${booking.id}`, error);
+    }
+  }
 
   redirect(`/merci?bookingId=${booking.id}`);
 }
