@@ -75,15 +75,25 @@ export default async function ProfessionalPage({ params }: ProfessionalPageProps
   return (
     <div className="flex flex-col gap-6">
       {mainSalon && (
-        <div className="relative aspect-[16/9] w-full overflow-hidden border border-line bg-ink">
-          <Image src={mainSalon.photoUrl} alt={mainSalon.name} fill className="object-cover" sizes="100vw" priority />
+        <div className="relative">
+          <div className="relative aspect-[16/9] w-full overflow-hidden border border-line bg-ink">
+            <Image src={mainSalon.photoUrl} alt={mainSalon.name} fill className="object-cover" sizes="100vw" priority />
+          </div>
+          <div className="absolute -bottom-8 left-4 h-20 w-20 overflow-hidden rounded-full border-4 border-paper bg-ink sm:h-24 sm:w-24">
+            <Image src={mainSalon.photoUrl} alt="" fill className="object-cover" sizes="96px" />
+          </div>
+          {ratingSummary.count > 0 && (
+            <div className="absolute -bottom-2 left-16 flex items-center gap-1 rounded-full border border-line bg-paper px-2 py-1 sm:left-20">
+              <StarRating rating={ratingSummary.average} count={ratingSummary.count} />
+            </div>
+          )}
         </div>
       )}
 
-      <div>
+      <div className="mt-10">
         <h1 className="font-serif text-2xl font-semibold tracking-tight">{professional.displayName}</h1>
         {mainSalon?.address && <p className="mt-1 text-sm text-ink/60">{mainSalon.address}</p>}
-        <StarRating rating={ratingSummary.average} count={ratingSummary.count} className="mt-2" />
+        {ratingSummary.count === 0 && <p className="mt-2 text-sm text-ink/50">Sin reseñas todavía</p>}
       </div>
 
       <ProfessionalProfileTabs
