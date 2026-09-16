@@ -29,7 +29,9 @@ export default async function Header() {
               strokeLinejoin="round"
             />
           </svg>
-          Tren<span className="text-clay">z</span>ame
+          <span>
+            Tren<span className="text-clay">z</span>ame
+          </span>
         </Link>
         <nav className="-mx-4 flex items-center gap-4 overflow-x-auto whitespace-nowrap px-4 text-xs sm:mx-0 sm:gap-6 sm:overflow-visible sm:px-0 sm:text-sm">
           <Link href="/catalogue" className="hover:opacity-60">
