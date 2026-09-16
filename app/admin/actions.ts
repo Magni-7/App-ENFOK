@@ -7,6 +7,7 @@ import { put } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
 import { requireProfessional } from "@/lib/professional";
 import { COOKIE_NAME, createSessionCookieValue } from "@/lib/adminSession";
+import { parseDepositFields } from "@/lib/deposit";
 import { resizeImage } from "@/lib/image";
 import { hashPassword, verifyPassword } from "@/lib/password";
 
@@ -180,9 +181,14 @@ export async function updateAccountDetails(formData: FormData): Promise<void> {
     redirect("/admin/detalles?error=email_used");
   }
 
+  const deposit = parseDepositFields(formData);
+  if (!deposit) {
+    redirect("/admin/detalles?error=deposit_invalid");
+  }
+
   await prisma.professional.update({
     where: { id: professional.id },
-    data: { displayName, email, whatsappNumber: whatsappNumber || null },
+    data: { displayName, email, whatsappNumber: whatsappNumber || null, ...deposit },
   });
 
   revalidatePath("/admin");

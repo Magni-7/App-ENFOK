@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { formatDepositMessage } from "@/lib/deposit";
 import { formatPriceFrom, formatDuration } from "@/lib/format";
 import { getAvailableStarts } from "@/lib/availability";
 import ReservationForm from "@/components/ReservationForm";
@@ -35,6 +36,14 @@ export default async function ReservationPage({ params }: ReservationPageProps) 
           {formatPriceFrom(style.basePriceCents)} · {formatDuration(style.durationMinutes)}
         </p>
       </div>
+
+      {style.professional.depositEnabled && style.professional.depositType && style.professional.depositValueCents && (
+        <p className="border border-miel/40 bg-miel-bg p-4 text-sm text-[#7a5620]">
+          {style.professional.displayName} pide{" "}
+          {formatDepositMessage(style.professional.depositType, style.professional.depositValueCents)} al
+          confirmar la cita.
+        </p>
+      )}
 
       {availableStarts.length === 0 ? (
         <p className="text-sm text-ink/60">

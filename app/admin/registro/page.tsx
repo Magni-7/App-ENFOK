@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import DepositFieldset from "@/components/DepositFieldset";
 import { registerProfessional } from "./actions";
 
 export const metadata: Metadata = {
@@ -16,6 +17,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   email_used: "Ya existe una cuenta con ese email. Inicia sesión en su lugar.",
   password_short: "La contraseña debe tener al menos 8 caracteres.",
   password_mismatch: "Las contraseñas no coinciden.",
+  deposit_invalid: "Indica un importe o porcentaje de adelanto válido.",
 };
 
 export default async function AdminRegistroPage({ searchParams }: RegistroPageProps) {
@@ -66,6 +68,8 @@ export default async function AdminRegistroPage({ searchParams }: RegistroPagePr
             className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
           />
         </label>
+        <DepositFieldset />
+
         <label className="flex flex-col gap-1 text-sm">
           Contraseña
           <input

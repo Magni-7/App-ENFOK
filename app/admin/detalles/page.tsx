@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import DepositFieldset from "@/components/DepositFieldset";
 import { requireProfessional } from "@/lib/professional";
 import { updateAccountDetails, updateAccountPassword } from "../actions";
 
@@ -18,6 +19,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   current_password_invalid: "La contraseña actual no es correcta.",
   password_short: "La nueva contraseña debe tener al menos 8 caracteres.",
   password_mismatch: "Las contraseñas nuevas no coinciden.",
+  deposit_invalid: "Indica un importe o porcentaje de adelanto válido.",
 };
 
 export default async function AdminDetallesPage({ searchParams }: DetallesPageProps) {
@@ -73,6 +75,22 @@ export default async function AdminDetallesPage({ searchParams }: DetallesPagePr
             className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
           />
         </label>
+
+        <DepositFieldset
+          defaultEnabled={professional.depositEnabled}
+          defaultType={professional.depositType as "FIXED" | "PERCENTAGE" | null}
+          defaultEuros={
+            professional.depositType === "FIXED" && professional.depositValueCents
+              ? (professional.depositValueCents / 100).toString()
+              : undefined
+          }
+          defaultPercent={
+            professional.depositType === "PERCENTAGE" && professional.depositValueCents
+              ? professional.depositValueCents.toString()
+              : undefined
+          }
+        />
+
         <button
           type="submit"
           className="self-start border border-ink bg-ink px-6 py-2 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-paper hover:text-ink"

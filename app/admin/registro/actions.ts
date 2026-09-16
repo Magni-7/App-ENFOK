@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
+import { parseDepositFields } from "@/lib/deposit";
 import { slugify } from "@/lib/slug";
 import { COOKIE_NAME, createSessionCookieValue } from "@/lib/adminSession";
 import { sendProfessionalWelcomeEmail } from "@/lib/email";
@@ -30,6 +31,11 @@ export async function registerProfessional(formData: FormData): Promise<void> {
     redirect("/admin/registro?error=password_mismatch");
   }
 
+  const deposit = parseDepositFields(formData);
+  if (!deposit) {
+    redirect("/admin/registro?error=deposit_invalid");
+  }
+
   const existingProfessional = await prisma.professional.findUnique({ where: { email } });
   if (existingProfessional) {
     redirect("/admin/registro?error=email_used");
@@ -51,6 +57,7 @@ export async function registerProfessional(formData: FormData): Promise<void> {
       email,
       whatsappNumber: whatsappNumber || null,
       passwordHash,
+      ...deposit,
     },
   });
 
