@@ -13,8 +13,23 @@ export default async function Header() {
           href="/"
           className="flex shrink-0 items-center gap-2 font-serif text-xl font-semibold tracking-tight sm:text-2xl"
         >
-          <span className="h-2.5 w-2.5 rounded-full bg-clay" aria-hidden="true" />
-          Trenzame
+          <svg viewBox="0 0 64 64" className="h-6 w-6 shrink-0" aria-hidden="true">
+            <defs>
+              <linearGradient id="trenzameZGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor="#8a3324" />
+                <stop offset="1" stopColor="#4b6b52" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M18,16 L46,16 L18,48 L46,48"
+              fill="none"
+              stroke="url(#trenzameZGrad)"
+              strokeWidth="9"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          Tren<span className="text-clay">z</span>ame
         </Link>
         <nav className="-mx-4 flex items-center gap-4 overflow-x-auto whitespace-nowrap px-4 text-xs sm:mx-0 sm:gap-6 sm:overflow-visible sm:px-0 sm:text-sm">
           <Link href="/catalogue" className="hover:opacity-60">
