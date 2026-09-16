@@ -1,5 +1,26 @@
 import { Resend } from "resend";
 
+// En-tête partagé des 4 emails : mise en page en <table> (pas flex/grid,
+// ignorés par le moteur de rendu Word d'Outlook desktop), width/height en
+// attributs HTML sur l'<img> (le CSS externe n'est pas fiable dans les
+// clients mail), et une pile de polices de secours classique à la place de
+// Fraunces (les web fonts ne se chargent pas de façon fiable par email). Le
+// Z reste en version unie clay (pas le dégradé du logo web) : à la taille
+// d'une icône d'email le dégradé rendrait mal, l'unie est cohérente avec le
+// favicon.
+const EMAIL_HEADER = `
+  <table role="presentation" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+    <tr>
+      <td style="vertical-align:middle;padding-right:10px;">
+        <img src="https://trenzame.vercel.app/icon-email.png" width="36" height="36" alt="Trenzame" style="display:block;border-radius:8px;" />
+      </td>
+      <td style="vertical-align:middle;">
+        <span style="font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:700;color:#18140f;">Tren<span style="color:#8a3324;">z</span>ame</span>
+      </td>
+    </tr>
+  </table>
+`;
+
 // Domaine d'envoi : par défaut le domaine de test de Resend, qui ne délivre
 // qu'à l'adresse du compte Resend lui-même. Pour envoyer à de vraies
 // clientes, il faut vérifier un domaine (ex. trenzame.com) sur resend.com
@@ -23,6 +44,7 @@ export async function sendWelcomeEmail({ to }: SendWelcomeEmailParams): Promise<
 
   const html = `
     <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+      ${EMAIL_HEADER}
       <p>¡Bienvenida a Trenzame! Tu cuenta acaba de crearse.</p>
       <p>Desde aquí podrás ver tus próximas citas y tu historial de reservas.</p>
     </div>
@@ -44,6 +66,7 @@ export async function sendProfessionalWelcomeEmail({
 
   const html = `
     <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+      ${EMAIL_HEADER}
       <p>¡Bienvenida a Trenzame, ${displayName}!</p>
       <p>Tu cuenta profesional acaba de crearse. Desde tu panel de administración podrás
       añadir tu salón, publicar tu galería de trabajos y gestionar tus citas.</p>
@@ -70,6 +93,7 @@ export async function sendReviewRequestEmail({
 
   const html = `
     <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+      ${EMAIL_HEADER}
       <p>¿Qué tal tu cita de "${styleName}" con ${professionalDisplayName}?</p>
       <p>Tu opinión ayuda a otras clientas a elegir con confianza.</p>
       <p style="margin: 24px 0;">
@@ -98,6 +122,7 @@ export async function sendPasswordResetEmail({ to, resetUrl }: SendPasswordReset
 
   const html = `
     <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+      ${EMAIL_HEADER}
       <p>Has pedido restablecer tu contraseña de Trenzame.</p>
       <p style="margin: 24px 0;">
         <a href="${resetUrl}" style="background:#8a3324;color:#fff;padding:12px 24px;text-decoration:none;border-radius:4px;display:inline-block;">
