@@ -15,6 +15,8 @@ const config: Config = {
         line: "#ddd0b3",
         clay: "#8a3324",
         fern: "#4b6b52",
+        miel: "#c08a3e",
+        "miel-bg": "#f1e3c8",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],

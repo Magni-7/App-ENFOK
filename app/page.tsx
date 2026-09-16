@@ -3,6 +3,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getProfessionalRatingSummary } from "@/lib/reviews";
 import SalonCard from "@/components/SalonCard";
+import StarRating from "@/components/StarRating";
 import StyleThumb from "@/components/StyleThumb";
 
 // Les données (professionnels, styles) changent en base y no deben quedar
@@ -24,7 +25,7 @@ export default async function HomePage() {
   });
   const professionalsWithSalon = professionals.filter((p) => p.salons.length > 0);
 
-  const [ratingSummaries, recentStyles] = await Promise.all([
+  const [ratingSummaries, recentStyles, globalRatingSummary] = await Promise.all([
     Promise.all(
       professionalsWithSalon.map((p) => getProfessionalRatingSummary(p.id))
     ),
@@ -34,6 +35,7 @@ export default async function HomePage() {
       take: 12,
       include: { photos: { orderBy: { order: "asc" }, take: 1 } },
     }),
+    prisma.review.aggregate({ _avg: { rating: true }, _count: true }),
   ]);
 
   return (
@@ -52,6 +54,11 @@ export default async function HomePage() {
         >
           Reservar una trenza
         </Link>
+        {globalRatingSummary._count > 0 && (
+          <div className="mt-6 flex justify-center">
+            <StarRating rating={globalRatingSummary._avg.rating ?? 0} count={globalRatingSummary._count} />
+          </div>
+        )}
       </section>
 
       {professionalsWithSalon.length > 0 && (

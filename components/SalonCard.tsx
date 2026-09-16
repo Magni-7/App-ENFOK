@@ -39,7 +39,7 @@ export default function SalonCard({
         {reviewCount > 0 ? (
           <StarRating rating={rating} count={reviewCount} className="mt-2" />
         ) : (
-          <span className="mt-2 inline-block rounded-full border border-clay/40 px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wide text-clay">
+          <span className="mt-2 inline-block rounded-full bg-fern px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wide text-white">
             Nuevo
           </span>
         )}

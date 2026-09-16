@@ -43,7 +43,7 @@ export default async function ResenarPage({ params, searchParams }: ResenarPageP
       </div>
 
       {enviado || booking.review ? (
-        <p className="border border-line bg-cream p-4 text-sm text-ink/80">
+        <p className="border border-fern/40 bg-fern/10 p-4 text-sm text-fern">
           ¡Gracias por tu valoración! Ayuda a otras clientas a elegir con confianza.
         </p>
       ) : booking.slot.endAt > new Date() ? (
