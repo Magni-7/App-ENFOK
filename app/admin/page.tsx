@@ -47,6 +47,9 @@ export default async function AdminPage() {
           <Link href="/admin/galeria" className="text-sm underline underline-offset-4 hover:text-ink">
             Gestionar galería
           </Link>
+          <Link href="/admin/clientas" className="text-sm underline underline-offset-4 hover:text-ink">
+            Mis clientas
+          </Link>
           <Link href="/admin/detalles" className="text-sm underline underline-offset-4 hover:text-ink">
             Detalles de la cuenta
           </Link>
