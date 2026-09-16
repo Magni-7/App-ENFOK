@@ -48,12 +48,20 @@ export default async function HomePage() {
         <p className="mx-auto mt-3 max-w-md text-ink/70">
           Reserva tu cita de trenzas con profesionales verificadas en Barcelona.
         </p>
-        <Link
-          href="/catalogue"
-          className="mt-6 inline-block border border-ink bg-ink px-8 py-3 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-paper hover:text-ink"
-        >
-          Reservar una trenza
-        </Link>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/catalogue"
+            className="inline-block border border-ink bg-ink px-8 py-3 text-sm font-medium uppercase tracking-wide text-white transition hover:bg-paper hover:text-ink"
+          >
+            Reservar una trenza
+          </Link>
+          <Link
+            href="/descubrir/quiz"
+            className="inline-block border border-clay px-8 py-3 text-sm font-medium uppercase tracking-wide text-clay transition hover:bg-clay hover:text-white"
+          >
+            Encuentra tu estilo
+          </Link>
+        </div>
         {globalRatingSummary._count > 0 && (
           <div className="mt-6 flex justify-center">
             <StarRating rating={globalRatingSummary._avg.rating ?? 0} count={globalRatingSummary._count} />

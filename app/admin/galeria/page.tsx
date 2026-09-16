@@ -3,7 +3,13 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireProfessional } from "@/lib/professional";
 import { formatDuration, formatPriceFrom } from "@/lib/format";
-import { createCategory, createGalleryItem, deleteGalleryItem, toggleGalleryItemActive } from "./actions";
+import {
+  createCategory,
+  createGalleryItem,
+  deleteGalleryItem,
+  toggleGalleryItemActive,
+  toggleGalleryItemPopular,
+} from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -235,12 +241,23 @@ export default async function AdminGaleriaPage() {
                         Oculta
                       </p>
                     )}
+                    {style.isPopular && (
+                      <p className="mt-1 text-xs font-medium uppercase tracking-wide text-miel">
+                        ★ Popular
+                      </p>
+                    )}
                   </div>
                   <div className="mt-2 flex gap-3 text-xs">
                     <form action={toggleGalleryItemActive}>
                       <input type="hidden" name="styleId" value={style.id} />
                       <button type="submit" className="underline underline-offset-4 hover:text-ink">
                         {style.isActive ? "Ocultar" : "Publicar"}
+                      </button>
+                    </form>
+                    <form action={toggleGalleryItemPopular}>
+                      <input type="hidden" name="styleId" value={style.id} />
+                      <button type="submit" className="underline underline-offset-4 hover:text-ink">
+                        {style.isPopular ? "Quitar de Popular" : "Marcar como Popular"}
                       </button>
                     </form>
                     <form action={deleteGalleryItem}>

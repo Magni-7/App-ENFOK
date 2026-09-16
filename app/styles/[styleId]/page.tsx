@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { formatDuration, formatHairProvider, formatPriceFrom } from "@/lib/format";
+import { splitStyleName } from "@/lib/styleFamily";
 import ContactButton from "@/components/ContactButton";
 import PhotoGallery from "@/components/PhotoGallery";
 
@@ -23,6 +24,15 @@ export default async function StylePage({ params }: StylePageProps) {
   if (!style || !style.isActive) {
     notFound();
   }
+
+  const { family, variant } = splitStyleName(style.name);
+  const siblingStyles = variant
+    ? await prisma.style.findMany({
+        where: { professionalId: style.professionalId, isActive: true },
+        orderBy: { basePriceCents: "asc" },
+      })
+    : [];
+  const variants = siblingStyles.filter((s) => splitStyleName(s.name).family === family);
 
   return (
     <div className="flex flex-col gap-8">
@@ -69,6 +79,33 @@ export default async function StylePage({ params }: StylePageProps) {
       >
         Reservar este estilo
       </Link>
+
+      {variants.length > 1 && (
+        <div className="border-t border-line pt-6">
+          <h2 className="mb-3 font-mono text-xs uppercase tracking-widest text-ink/60">
+            Precio por longitud — {family}
+          </h2>
+          <div className="flex flex-col divide-y divide-line border-y border-line">
+            {variants.map((v) => {
+              const isCurrent = v.id === style.id;
+              return (
+                <Link
+                  key={v.id}
+                  href={`/styles/${v.id}`}
+                  className={`flex items-center justify-between gap-4 py-3 text-sm transition ${
+                    isCurrent ? "font-medium text-clay" : "text-ink/80 hover:text-clay"
+                  }`}
+                >
+                  <span>{splitStyleName(v.name).variant}</span>
+                  <span className="font-mono text-xs">
+                    {formatPriceFrom(v.basePriceCents)} · {formatDuration(v.durationMinutes)}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="border-t border-line pt-6">
         <p className="mb-3 text-sm text-ink/70">¿Prefieres una variante personalizada de este estilo?</p>
