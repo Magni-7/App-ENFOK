@@ -47,6 +47,7 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
       include: {
         photos: { orderBy: { order: "asc" }, take: 1 },
         professional: { select: { displayName: true } },
+        category: { select: { name: true } },
       },
       orderBy,
     }),
@@ -118,6 +119,36 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
             </div>
           </div>
         )
+      ) : professional ? (
+        // Vue d'un seul salon : structurée en 2 niveaux, famille de style
+        // (catégorie) → variantes, chaque variante gardant son propre
+        // prix/durée — au lieu d'une grille plate qui mélange tout.
+        <div className="flex flex-col gap-10">
+          {Array.from(new Set(styles.map((s) => s.category.name))).map((categoryName) => (
+            <div key={categoryName}>
+              <h2 className="mb-4 font-mono text-xs uppercase tracking-widest text-ink/60">
+                {categoryName}
+              </h2>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                {styles
+                  .filter((s) => s.category.name === categoryName)
+                  .map((style) => (
+                    <StyleCard
+                      key={style.id}
+                      id={style.id}
+                      name={style.name}
+                      photoUrl={style.photos[0]?.url ?? "/images/placeholder-style.svg"}
+                      basePriceCents={style.basePriceCents}
+                      durationMinutes={style.durationMinutes}
+                      minHairLength={style.minHairLength}
+                      createdAt={style.createdAt}
+                      isPopular={style.isPopular}
+                    />
+                  ))}
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {styles.map((style) => (
@@ -130,7 +161,8 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
               durationMinutes={style.durationMinutes}
               minHairLength={style.minHairLength}
               createdAt={style.createdAt}
-              professionalName={professional ? undefined : style.professional.displayName}
+              isPopular={style.isPopular}
+              professionalName={style.professional.displayName}
             />
           ))}
         </div>

@@ -107,6 +107,10 @@ model Style {
   // Valeurs attendues : "CLIENT" | "PROFESSIONAL" (voir lib/format.ts)
   hairProvidedBy  String       @default("CLIENT")
   isActive        Boolean      @default(true)
+  // Mise en avant manuelle par la professionnelle (badge "★ Popular"), pas
+  // un calcul automatique tant qu'il n'y a pas assez de réservations pour
+  // que ce soit un signal fiable.
+  isPopular       Boolean      @default(false)
   order           Int          @default(0)
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt

@@ -109,6 +109,26 @@ export async function toggleGalleryItemActive(formData: FormData): Promise<void>
   revalidatePath("/catalogue");
 }
 
+export async function toggleGalleryItemPopular(formData: FormData): Promise<void> {
+  const professional = await requireProfessional();
+
+  const styleId = String(formData.get("styleId") ?? "");
+
+  const style = await prisma.style.findFirst({
+    where: { id: styleId, professionalId: professional.id },
+  });
+  if (!style) throw new Error("Estilo no encontrado.");
+
+  await prisma.style.update({
+    where: { id: style.id },
+    data: { isPopular: !style.isPopular },
+  });
+
+  revalidatePath("/admin/galeria");
+  revalidatePath("/galeria");
+  revalidatePath("/catalogue");
+}
+
 export async function createCategory(formData: FormData): Promise<void> {
   const professional = await requireProfessional();
   const name = String(formData.get("name") ?? "").trim();
