@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { formatDepositMessage } from "@/lib/deposit";
 import { formatDuration, formatHairProvider, formatPriceFrom } from "@/lib/format";
 import { splitStyleName } from "@/lib/styleFamily";
 import ContactButton from "@/components/ContactButton";
@@ -72,6 +73,14 @@ export default async function StylePage({ params }: StylePageProps) {
           <dd className="mt-1 font-medium">{formatHairProvider(style.hairProvidedBy)}</dd>
         </div>
       </dl>
+
+      {style.professional.depositEnabled && style.professional.depositType && style.professional.depositValueCents && (
+        <p className="border border-miel/40 bg-miel-bg p-4 text-sm text-[#7a5620]">
+          {style.professional.displayName} pide{" "}
+          {formatDepositMessage(style.professional.depositType, style.professional.depositValueCents)} al
+          confirmar la cita.
+        </p>
+      )}
 
       <Link
         href={`/reserver/${style.id}`}

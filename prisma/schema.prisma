@@ -47,6 +47,17 @@ model Professional {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
+  // Acompte à la réservation : désactivé par défaut, chaque professionnel
+  // choisit s'il l'active (voir /admin/registro et /admin/detalles). Ce
+  // réglage prépare seulement l'affichage — le prélèvement réel (Stripe/
+  // Apple Pay/Google Pay) est un chantier séparé, pas encore branché.
+  depositEnabled      Boolean  @default(false)
+  // "FIXED" | "PERCENTAGE", null si depositEnabled = false
+  depositType         String?
+  // Si FIXED : montant en centimes. Si PERCENTAGE : 0-100. Null si
+  // depositEnabled = false.
+  depositValueCents   Int?
+
   categories Category[]
   styles     Style[]
   slots      Slot[]
