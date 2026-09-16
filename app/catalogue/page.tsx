@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import CategoryChips from "@/components/CategoryChips";
@@ -84,22 +85,39 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
       </div>
 
       {styles.length === 0 ? (
-        <div className="flex flex-col items-start gap-4">
-          <p className="text-sm text-ink/60">
-            {q
-              ? `Ningún estilo coincide con "${q}".`
-              : professional
-                ? `${professional.displayName} todavía no ha publicado precios y duraciones. Mientras tanto, pregunta directamente:`
-                : "No hay estilos disponibles con estos filtros por ahora."}
-          </p>
-          {professional && !q && (
+        professional && !q ? (
+          <div className="flex flex-col items-start gap-4">
+            <p className="text-sm text-ink/60">
+              {professional.displayName} todavía no ha publicado precios y duraciones. Mientras tanto,
+              pregunta directamente:
+            </p>
             <ContactButton
               whatsappNumber={professional.whatsappNumber}
               instagramUsername={professional.instagramDmUsername}
               message={`¡Hola ${professional.displayName}! Me interesa reservar una cita, ¿me puedes dar precio y disponibilidad?`}
             />
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="flex flex-col items-start gap-3">
+            <h2 className="font-serif text-lg font-medium">
+              Por aquí no hay trenzas con estos filtros… todavía
+            </h2>
+            <p className="text-sm text-ink/60">
+              Prueba a ampliar los filtros, o descubre los estilos más pedidos del momento.
+            </p>
+            <div className="mt-1 flex flex-wrap items-center gap-4">
+              <Link
+                href="/catalogue"
+                className="border border-clay px-5 py-2 text-sm font-medium uppercase tracking-wide text-clay transition hover:bg-clay hover:text-white"
+              >
+                Reiniciar filtros
+              </Link>
+              <Link href="/galeria" className="text-sm text-clay underline underline-offset-4 hover:no-underline">
+                Ver últimas creaciones →
+              </Link>
+            </div>
+          </div>
+        )
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {styles.map((style) => (
@@ -110,6 +128,8 @@ export default async function CataloguePage({ searchParams }: CataloguePageProps
               photoUrl={style.photos[0]?.url ?? "/images/placeholder-style.svg"}
               basePriceCents={style.basePriceCents}
               durationMinutes={style.durationMinutes}
+              minHairLength={style.minHairLength}
+              createdAt={style.createdAt}
               professionalName={professional ? undefined : style.professional.displayName}
             />
           ))}

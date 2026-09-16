@@ -40,7 +40,7 @@ export default async function DetallesPage({ searchParams }: DetallesPageProps) 
       </div>
 
       {actualizado && (
-        <p className="border border-line bg-cream p-4 text-sm text-ink/80">Datos actualizados correctamente.</p>
+        <p className="border border-fern/40 bg-fern/10 p-4 text-sm text-fern">Datos actualizados correctamente.</p>
       )}
       {error && (
         <p className="border border-clay/40 bg-clay/10 p-4 text-sm text-clay">

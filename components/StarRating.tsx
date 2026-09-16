@@ -26,7 +26,7 @@ export default function StarRating({ rating, count, className = "" }: StarRating
                 fill={filled ? "currentColor" : half ? `url(#star-half-${i})` : "none"}
                 stroke="currentColor"
                 strokeWidth="1"
-                className="text-clay"
+                className="text-miel"
               />
             </svg>
           );

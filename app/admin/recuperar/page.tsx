@@ -24,7 +24,7 @@ export default async function AdminRecuperarPage({ searchParams }: RecuperarPage
       </div>
 
       {enviado ? (
-        <p className="border border-line bg-cream p-4 text-sm text-ink/80">
+        <p className="border border-fern/40 bg-fern/10 p-4 text-sm text-fern">
           Si existe una cuenta con ese email, te hemos enviado un enlace para restablecer tu
           contraseña. Revisa también la carpeta de spam.
         </p>
