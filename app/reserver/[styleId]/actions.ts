@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentClient } from "@/lib/clientAuth";
 import { sendBookingConfirmationEmail, sendBookingNotificationEmail } from "@/lib/email";
-import { formatPriceFrom } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 
 export async function createBooking(formData: FormData): Promise<void> {
   const styleId = String(formData.get("styleId") ?? "");
@@ -77,7 +77,7 @@ export async function createBooking(formData: FormData): Promise<void> {
         professionalDisplayName: professional.displayName,
         styleName: style.name,
         startAt,
-        priceLabel: formatPriceFrom(style.basePriceCents),
+        priceLabel: formatPrice(style.basePriceCents),
       });
     } catch (error) {
       console.error(`Erreur en envoyant la confirmation de réservation ${booking.id}`, error);

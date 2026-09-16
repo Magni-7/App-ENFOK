@@ -4,6 +4,12 @@ export function formatPriceFrom(basePriceCents: number): string {
   return `desde ${formatted}€`;
 }
 
+export function formatPrice(basePriceCents: number): string {
+  const euros = basePriceCents / 100;
+  const formatted = euros % 1 === 0 ? euros.toFixed(0) : euros.toFixed(2);
+  return `${formatted}€`;
+}
+
 export function formatDuration(durationMinutes: number): string {
   const hours = Math.floor(durationMinutes / 60);
   const minutes = durationMinutes % 60;
