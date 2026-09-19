@@ -85,8 +85,11 @@ export default function PrivacidadPage() {
           <h2 className="font-medium text-ink">7. Derechos de las personas usuarias</h2>
           <p>
             Puedes ejercer tus derechos de acceso, rectificación, supresión,
-            oposición, limitación y portabilidad escribiendo a la profesional a
-            través del contacto de WhatsApp o Instagram indicado en la plataforma.
+            oposición, limitación y portabilidad escribiendo a{" "}
+            <a href="mailto:hola@trenzame.com" className="underline underline-offset-4 hover:no-underline">
+              hola@trenzame.com
+            </a>
+            .
           </p>
         </section>
       </div>
