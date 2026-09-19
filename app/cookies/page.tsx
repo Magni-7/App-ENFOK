@@ -30,13 +30,22 @@ export default function CookiesPage() {
               </thead>
               <tbody>
                 <tr className="border-b border-line">
-                  <td className="px-3 py-2 font-mono text-xs">eva_admin_session</td>
+                  <td className="px-3 py-2 font-mono text-xs">trenzame_admin_session</td>
                   <td className="px-3 py-2">
-                    Mantener la sesión iniciada en la zona de administración
-                    (agenda de la profesional).
+                    Mantener la sesión iniciada en la zona de administración (agenda de la
+                    profesional).
                   </td>
                   <td className="px-3 py-2">Técnica / necesaria</td>
-                  <td className="px-3 py-2">Sesión</td>
+                  <td className="px-3 py-2">7 días</td>
+                </tr>
+                <tr className="border-b border-line">
+                  <td className="px-3 py-2 font-mono text-xs">trenzame_client_session</td>
+                  <td className="px-3 py-2">
+                    Mantener la sesión iniciada de la clienta en su cuenta (historial de
+                    citas).
+                  </td>
+                  <td className="px-3 py-2">Técnica / necesaria</td>
+                  <td className="px-3 py-2">30 días</td>
                 </tr>
               </tbody>
             </table>

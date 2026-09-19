@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from "crypto";
 
-const COOKIE_NAME = "eva_admin_session";
+const COOKIE_NAME = "trenzame_admin_session";
 
 function getSecret(): string {
   const secret = process.env.ADMIN_SESSION_SECRET;
