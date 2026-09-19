@@ -28,6 +28,10 @@ const EMAIL_HEADER = `
 // et définir RESEND_FROM_EMAIL avec une adresse de ce domaine.
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "Trenzame <onboarding@resend.dev>";
 
+// Adresse où atterrissent les réponses des clientes qui répondent directement
+// à un email (l'adresse d'envoi elle-même n'est pas une vraie boîte mail).
+const REPLY_TO_EMAIL = "trenzamee@gmail.com";
+
 function getResend(): Resend {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
@@ -51,7 +55,7 @@ export async function sendWelcomeEmail({ to }: SendWelcomeEmailParams): Promise<
     </div>
   `;
 
-  await resend.emails.send({ from: FROM_EMAIL, to, subject: "¡Bienvenida a Trenzame!", html });
+  await resend.emails.send({ from: FROM_EMAIL, to, replyTo: REPLY_TO_EMAIL, subject: "¡Bienvenida a Trenzame!", html });
 }
 
 type SendProfessionalWelcomeEmailParams = {
@@ -74,7 +78,7 @@ export async function sendProfessionalWelcomeEmail({
     </div>
   `;
 
-  await resend.emails.send({ from: FROM_EMAIL, to, subject: "¡Bienvenida a Trenzame!", html });
+  await resend.emails.send({ from: FROM_EMAIL, to, replyTo: REPLY_TO_EMAIL, subject: "¡Bienvenida a Trenzame!", html });
 }
 
 type SendReviewRequestEmailParams = {
@@ -108,6 +112,7 @@ export async function sendReviewRequestEmail({
   await resend.emails.send({
     from: FROM_EMAIL,
     to,
+    replyTo: REPLY_TO_EMAIL,
     subject: `¿Qué tal tu cita con ${professionalDisplayName}?`,
     html,
   });
@@ -134,7 +139,7 @@ export async function sendPasswordResetEmail({ to, resetUrl }: SendPasswordReset
     </div>
   `;
 
-  await resend.emails.send({ from: FROM_EMAIL, to, subject: "Restablece tu contraseña — Trenzame", html });
+  await resend.emails.send({ from: FROM_EMAIL, to, replyTo: REPLY_TO_EMAIL, subject: "Restablece tu contraseña — Trenzame", html });
 }
 
 type SendBookingConfirmationEmailParams = {
@@ -165,7 +170,7 @@ export async function sendBookingConfirmationEmail({
     </div>
   `;
 
-  await resend.emails.send({ from: FROM_EMAIL, to, subject: `Cita confirmada — ${styleName}`, html });
+  await resend.emails.send({ from: FROM_EMAIL, to, replyTo: REPLY_TO_EMAIL, subject: `Cita confirmada — ${styleName}`, html });
 }
 
 type SendBookingNotificationEmailParams = {
@@ -197,7 +202,7 @@ export async function sendBookingNotificationEmail({
     </div>
   `;
 
-  await resend.emails.send({ from: FROM_EMAIL, to, subject: `Nueva reserva — ${styleName}`, html });
+  await resend.emails.send({ from: FROM_EMAIL, to, replyTo: REPLY_TO_EMAIL, subject: `Nueva reserva — ${styleName}`, html });
 }
 
 type SendBookingReminderEmailParams = {
@@ -225,5 +230,5 @@ export async function sendBookingReminderEmail({
     </div>
   `;
 
-  await resend.emails.send({ from: FROM_EMAIL, to, subject: `Mañana: tu cita de ${styleName}`, html });
+  await resend.emails.send({ from: FROM_EMAIL, to, replyTo: REPLY_TO_EMAIL, subject: `Mañana: tu cita de ${styleName}`, html });
 }
