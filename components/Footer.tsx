@@ -18,6 +18,9 @@ export default function Footer() {
           <Link href="/admin/login" className="hover:text-ink">
             Área profesional
           </Link>
+          <a href="mailto:trenzamee@gmail.com" className="hover:text-ink">
+            Contacto
+          </a>
         </nav>
       </div>
     </footer>
