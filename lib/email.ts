@@ -42,16 +42,28 @@ function getResend(): Resend {
 
 type SendWelcomeEmailParams = {
   to: string;
+  firstName: string;
 };
 
-export async function sendWelcomeEmail({ to }: SendWelcomeEmailParams): Promise<void> {
+export async function sendWelcomeEmail({ to, firstName }: SendWelcomeEmailParams): Promise<void> {
   const resend = getResend();
 
   const html = `
     <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
       ${EMAIL_HEADER}
-      <p>¡Bienvenida a Trenzame! Tu cuenta acaba de crearse.</p>
-      <p>Desde aquí podrás ver tus próximas citas y tu historial de reservas.</p>
+      <p style="font-family:Georgia,'Times New Roman',serif;font-size:20px;font-weight:700;color:#18140f;margin:0 0 12px;">¡Bienvenida, ${firstName}!</p>
+      <p style="font-size:14px;line-height:1.6;color:#333;margin:0 0 16px;">
+        Tu cuenta en Trenzame ya está lista. Desde aquí podrás ver tus próximas citas, tu historial
+        de reservas, y reservar con tus profesionales de confianza en un par de clics.
+      </p>
+      <p style="margin:24px 0;">
+        <a href="https://trenzame.com/cuenta" style="background:#8a3324;color:#fff;padding:12px 24px;text-decoration:none;border-radius:4px;display:inline-block;font-size:14px;">
+          Ver mi cuenta
+        </a>
+      </p>
+      <p style="font-size:12px;color:#6b6459;border-top:1px solid #ddd0b3;padding-top:16px;margin-top:24px;">
+        ¿Alguna pregunta? Escríbenos a <a href="mailto:hola@trenzame.com" style="color:#8a3324;">hola@trenzame.com</a>.
+      </p>
     </div>
   `;
 

@@ -8,7 +8,9 @@ import { createClientSessionCookieValue, CLIENT_COOKIE_NAME } from "@/lib/client
 import { sendWelcomeEmail } from "@/lib/email";
 
 export async function registerClient(formData: FormData): Promise<void> {
-  const name = String(formData.get("name") ?? "").trim();
+  const firstName = String(formData.get("firstName") ?? "").trim();
+  const lastName = String(formData.get("lastName") ?? "").trim();
+  const name = `${firstName} ${lastName}`.trim();
   const email = String(formData.get("email") ?? "")
     .trim()
     .toLowerCase();
@@ -16,7 +18,7 @@ export async function registerClient(formData: FormData): Promise<void> {
   const password = String(formData.get("password") ?? "");
   const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
 
-  if (!name) {
+  if (!firstName || !lastName) {
     redirect("/cuenta/registro?error=name_required");
   }
 
@@ -46,7 +48,7 @@ export async function registerClient(formData: FormData): Promise<void> {
     data: { email, name, phone, passwordHash },
   });
 
-  await sendWelcomeEmail({ to: email }).catch(() => {
+  await sendWelcomeEmail({ to: email, firstName }).catch(() => {
     // L'échec de l'email de bienvenue ne doit pas bloquer la création du compte.
   });
 
