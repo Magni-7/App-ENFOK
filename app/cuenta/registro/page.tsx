@@ -15,7 +15,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   password_mismatch: "Las contraseñas no coinciden.",
   password_short: "La contraseña debe tener al menos 8 caracteres.",
   invalid_email: "Por favor indica un email válido.",
-  name_required: "Por favor indica tu nombre.",
+  name_required: "Por favor indica tu nombre y apellidos.",
   phone_required: "Por favor indica tu teléfono.",
 };
 
@@ -42,7 +42,16 @@ export default async function RegistroPage({ searchParams }: RegistroPageProps) 
           Nombre
           <input
             type="text"
-            name="name"
+            name="firstName"
+            required
+            className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
+          />
+        </label>
+        <label className="flex flex-col gap-1 text-sm">
+          Apellidos
+          <input
+            type="text"
+            name="lastName"
             required
             className="border border-line px-3 py-2 focus:border-ink focus:outline-none"
           />
